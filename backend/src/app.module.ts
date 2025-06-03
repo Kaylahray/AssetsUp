@@ -19,6 +19,7 @@ import { ReportsModule } from "./reports/reports.module"
 import { HealthModule } from "./health/health.module"
 import { ScheduleModule } from "@nestjs/schedule"
 import { ThrottlerModule } from "@nestjs/throttler"
+import { CertificateModule } from './certificate/certificate.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ThrottlerModule } from "@nestjs/throttler"
       ttl: 60,
       limit: 10,
     }),
+    CertificateModule,
   ],
   controllers: [AppController],
   providers: [AppService],
