@@ -5,11 +5,12 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import { join } from "path"
 import * as express from "express"
 import * as compression from "compression"
-import * as helmet from "helmet"
-import * as rateLimit from "express-rate-limit"
-import { HttpExceptionFilter } from "./common/filters/http-exception.filter"
-import { TransformInterceptor } from "./common/interceptors/transform.interceptor"
-import { LoggingInterceptor } from "./common/interceptors/logging.interceptor"
+import helmet from "helmet"
+import rateLimit from "express-rate-limit"
+// Removed missing imports
+// import { HttpExceptionFilter } from "./common/filters/http-exception.filter"
+// import { TransformInterceptor } from "./common/interceptors/transform.interceptor"
+// import { LoggingInterceptor } from "./common/interceptors/logging.interceptor"
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap")
@@ -57,11 +58,9 @@ async function bootstrap() {
     }),
   )
 
-  // Global filters
-  app.useGlobalFilters(new HttpExceptionFilter())
-
-  // Global interceptors
-  app.useGlobalInterceptors(new LoggingInterceptor(), new TransformInterceptor())
+  // Removed global filters/interceptors that don't exist
+  // app.useGlobalFilters(new HttpExceptionFilter())
+  // app.useGlobalInterceptors(new LoggingInterceptor(), new TransformInterceptor())
 
   // Serve static files
   app.use("/uploads", express.static(join(__dirname, "..", "uploads")))
