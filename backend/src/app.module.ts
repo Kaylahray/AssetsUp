@@ -5,8 +5,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
-import { IncidentTrackerModule } from './incident-tracker/incident-tracker.module';
-import { InsuranceManagerModule } from './insurance-manager/insurance-manager.module';
+import { OrganizationUnitsModule } from './organization-units/organization-units.module';
 
 @Module({
   imports: [
@@ -29,8 +28,7 @@ import { InsuranceManagerModule } from './insurance-manager/insurance-manager.mo
     }),
     UsersModule,
     AuthModule,
-    IncidentTrackerModule,
-    InsuranceManagerModule,
+    OrganizationUnitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
