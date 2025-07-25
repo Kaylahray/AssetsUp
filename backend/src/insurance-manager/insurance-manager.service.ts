@@ -5,6 +5,8 @@ import { Insurance } from './entities/insurance.entity';
 import { CreateInsuranceDto } from './dto/create-insurance.dto';
 import { UpdateInsuranceDto } from './dto/update-insurance.dto';
 
+
+// Insurance Manager Service
 @Injectable()
 export class InsuranceManagerService {
   constructor(
