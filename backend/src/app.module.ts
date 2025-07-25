@@ -5,9 +5,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
-import { PermissionModule } from './permission/permission.module';
-import { DigitalSignatureModule } from './digital-signature/digital-signature.module';
-
+import { OrganizationUnitsModule } from './organization-units/organization-units.module';
 
 @Module({
   imports: [
@@ -30,8 +28,7 @@ import { DigitalSignatureModule } from './digital-signature/digital-signature.mo
     }),
     UsersModule,
     AuthModule,
-    PermissionModule,
-    DigitalSignatureModule,
+    OrganizationUnitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
