@@ -37,7 +37,7 @@ export class UsersService {
       ...createUserDto,
       password: hashedPassword,
     })
-    return this.usersRepository.save(user)
+    return await this.usersRepository.save(user)
   }
 
   async update(id: string, updateUserDto: any): Promise<User> {
