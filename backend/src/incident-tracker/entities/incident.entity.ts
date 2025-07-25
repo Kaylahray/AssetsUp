@@ -6,6 +6,7 @@ export enum IncidentResolutionStatus {
   RESOLVED = 'resolved',
 }
 
+// Incident entity
 @Entity('incidents')
 export class Incident {
   @PrimaryGeneratedColumn()
