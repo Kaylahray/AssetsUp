@@ -6,6 +6,7 @@ import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { OrganizationUnitsModule } from './organization-units/organization-units.module';
+import { ChangeLogModule } from './change-log/change-log.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { OrganizationUnitsModule } from './organization-units/organization-units
     UsersModule,
     AuthModule,
     OrganizationUnitsModule,
+    ChangeLogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
