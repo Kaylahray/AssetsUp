@@ -11,6 +11,7 @@ import { BarcodeModule } from './barcode/barcode.module';
 
 @Module({
   imports: [
+    UsageStatsModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
