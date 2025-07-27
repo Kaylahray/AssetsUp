@@ -7,6 +7,7 @@ import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { OrganizationUnitsModule } from './organization-units/organization-units.module';
 import { ChangeLogModule } from './change-log/change-log.module';
+import { BarcodeModule } from './barcode/barcode.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ChangeLogModule } from './change-log/change-log.module';
     AuthModule,
     OrganizationUnitsModule,
     ChangeLogModule,
+    BarcodeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
