@@ -8,10 +8,11 @@ import { AuthModule } from "./auth/auth.module";
 import { OrganizationUnitsModule } from './organization-units/organization-units.module';
 import { ChangeLogModule } from './change-log/change-log.module';
 import { BarcodeModule } from './barcode/barcode.module';
+import { MobileDevicesModule } from './mobile-devices/mobile-devices.module';
+import { PolicyDocumentsModule } from './policy-documents/policy-documents.module';
 
 @Module({
   imports: [
-    UsageStatsModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -34,6 +35,8 @@ import { BarcodeModule } from './barcode/barcode.module';
     OrganizationUnitsModule,
     ChangeLogModule,
     BarcodeModule,
+    MobileDevicesModule,
+    PolicyDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
