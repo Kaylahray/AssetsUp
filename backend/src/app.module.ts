@@ -10,6 +10,7 @@ import { ChangeLogModule } from './change-log/change-log.module';
 import { BarcodeModule } from './barcode/barcode.module';
 import { MobileDevicesModule } from './mobile-devices/mobile-devices.module';
 import { PolicyDocumentsModule } from './policy-documents/policy-documents.module';
+import { DeviceHealthModule } from './device-health/device-health.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PolicyDocumentsModule } from './policy-documents/policy-documents.modul
     BarcodeModule,
     MobileDevicesModule,
     PolicyDocumentsModule,
+    DeviceHealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
