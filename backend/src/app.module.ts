@@ -14,6 +14,14 @@ import { ComplianceModule } from "./compliance/compliance.module";
 @Module({
   imports: [
     //    UsageStatsModule,
+import { OrganizationUnitsModule } from './organization-units/organization-units.module';
+import { ChangeLogModule } from './change-log/change-log.module';
+import { BarcodeModule } from './barcode/barcode.module';
+import { MobileDevicesModule } from './mobile-devices/mobile-devices.module';
+import { PolicyDocumentsModule } from './policy-documents/policy-documents.module';
+
+@Module({
+  imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -37,8 +45,9 @@ import { ComplianceModule } from "./compliance/compliance.module";
     OrganizationUnitsModule,
     ChangeLogModule,
     BarcodeModule,
-
     ComplianceModule,
+    MobileDevicesModule,
+    PolicyDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
