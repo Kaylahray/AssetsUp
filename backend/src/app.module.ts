@@ -8,6 +8,8 @@ import { AuthModule } from "./auth/auth.module";
 import { OrganizationUnitsModule } from './organization-units/organization-units.module';
 import { ChangeLogModule } from './change-log/change-log.module';
 import { BarcodeModule } from './barcode/barcode.module';
+import { ScheduleModule } from '@nestjs/schedule';
+
 
 @Module({
   imports: [
