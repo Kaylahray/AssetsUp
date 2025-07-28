@@ -5,13 +5,15 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
-import { OrganizationUnitsModule } from './organization-units/organization-units.module';
-import { ChangeLogModule } from './change-log/change-log.module';
-import { BarcodeModule } from './barcode/barcode.module';
+import { OrganizationUnitsModule } from "./organization-units/organization-units.module";
+import { ChangeLogModule } from "./change-log/change-log.module";
+import { BarcodeModule } from "./barcode/barcode.module";
+import { ScheduleModule } from "@nestjs/schedule";
+import { ComplianceModule } from "./compliance/compliance.module";
 
 @Module({
   imports: [
-    UsageStatsModule,
+    //    UsageStatsModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -29,11 +31,14 @@ import { BarcodeModule } from './barcode/barcode.module';
         synchronize: configService.get("NODE_ENV") !== "production",
       }),
     }),
+    ScheduleModule.forRoot(),
     UsersModule,
     AuthModule,
     OrganizationUnitsModule,
     ChangeLogModule,
     BarcodeModule,
+
+    ComplianceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
