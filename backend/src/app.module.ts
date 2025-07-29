@@ -17,6 +17,7 @@ import { ComplianceModule } from "./compliance/compliance.module";
 import { OrganizationUnitsModule } from './organization-units/organization-units.module';
 import { ChangeLogModule } from './change-log/change-log.module';
 import { BarcodeModule } from './barcode/barcode.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { MobileDevicesModule } from './mobile-devices/mobile-devices.module';
 import { PolicyDocumentsModule } from './policy-documents/policy-documents.module';
 
