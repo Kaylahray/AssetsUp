@@ -19,6 +19,24 @@ export class AuditLog {
   @Column("jsonb", { nullable: true })
   details: any;
 
+   @Column()
+  actionType: string;
+
+  @Column()
+  affectedEntity: string;
+
+  @Column({ nullable: true })
+  entityId: string;
+
+  @Column()
+  initiator: string;
+
+  @Column({ type: 'json', nullable: true })
+  metadata: Record<string, any>;
+
+  @CreateDateColumn()
+  timestamp: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 }
