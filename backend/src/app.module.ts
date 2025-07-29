@@ -20,6 +20,7 @@ import { BarcodeModule } from './barcode/barcode.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MobileDevicesModule } from './mobile-devices/mobile-devices.module';
 import { PolicyDocumentsModule } from './policy-documents/policy-documents.module';
+import { DeviceHealthModule } from './device-health/device-health.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PolicyDocumentsModule } from './policy-documents/policy-documents.modul
     ComplianceModule,
     MobileDevicesModule,
     PolicyDocumentsModule,
+    DeviceHealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
