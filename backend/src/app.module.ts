@@ -10,6 +10,7 @@ import { ChangeLogModule } from "./change-log/change-log.module";
 import { BarcodeModule } from "./barcode/barcode.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ComplianceModule } from "./compliance/compliance.module";
+import { NotificationsModule } from "./notifications/notifications.module";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ComplianceModule } from "./compliance/compliance.module";
     PolicyDocumentsModule,
     WarrantyModule,
     DeviceHealthModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
