@@ -18,6 +18,7 @@ import { MobileDevicesModule } from "./mobile-devices/mobile-devices.module";
 import { PolicyDocumentsModule } from "./policy-documents/policy-documents.module";
 import { DeviceHealthModule } from "./device-health/device-health.module";
 import { QRCodeModule } from "./QR-Code/qrcode.module";
+import { NotificationsModule } from "./notifications/notifications.module";
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { QRCodeModule } from "./QR-Code/qrcode.module";
     WarrantyModule,
     DeviceHealthModule,
     QRCodeModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
