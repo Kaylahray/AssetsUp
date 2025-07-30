@@ -1,6 +1,6 @@
-
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { QRCode as QRCodeLib } from "qrcode";
+// ...existing code...
+import * as QRCodeLib from "qrcode";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { QRCode } from "./entities/qrcode.entity";
@@ -23,23 +23,32 @@ export class QRCodeService {
 
     return this.qrRepo.save(qr);
   }
-
-  async findOne(id: string): Promise<QRCode> {
+  /**
+   * Returns a QR code image (PNG or SVG) for the given QR code id.
+   * The QR code encodes asset info and a link to the asset details endpoint.
+   */
+  async getQRCodeImage(
+    id: string,
+    format: "svg" | "png" = "png"
+  ): Promise<{ image: Buffer | string; mimeType: string }> {
     const qr = await this.qrRepo.findOneBy({ id });
     if (!qr) throw new NotFoundException("QR code not found");
-    return qr;
-  }
-
-  async delete(id: string): Promise<void> {
-    const result = await this.qrRepo.delete(id);
-    if (result.affected === 0) throw new NotFoundException("QR code not found");
-  }
-
-  async mockScan(id: string): Promise<{ referenceId: string; data: string }> {
-    const qr = await this.findOne(id);
-    return {
+    // Compose QR data: asset info + link
+    const assetInfo = {
       referenceId: qr.referenceId,
-      data: qr.data,
+      createdAt: qr.createdAt,
     };
+    // The link to view asset details (customize as needed)
+    const assetLink = `${
+      process.env.ASSET_BASE_URL || "https://yourdomain.com/assets"
+    }/${qr.referenceId}`;
+    const qrPayload = JSON.stringify({ ...assetInfo, link: assetLink });
+    if (format === "svg") {
+      const svg = await QRCodeLib.toString(qrPayload, { type: "svg" });
+      return { image: svg, mimeType: "image/svg+xml" };
+    } else {
+      const pngBuffer = await QRCodeLib.toBuffer(qrPayload, { type: "png" });
+      return { image: pngBuffer, mimeType: "image/png" };
+    }
   }
 }
