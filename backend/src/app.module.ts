@@ -47,6 +47,7 @@ import { QRCodeModule } from "./QR-Code/qrcode.module";
     ComplianceModule,
     MobileDevicesModule,
     PolicyDocumentsModule,
+    WarrantyModule,
     DeviceHealthModule,
     QRCodeModule,
   ],
