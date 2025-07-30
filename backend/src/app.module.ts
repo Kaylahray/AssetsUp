@@ -20,6 +20,7 @@ import { HealthModule } from "./health/health.module"
 import { ScheduleModule } from "@nestjs/schedule"
 import { ThrottlerModule } from "@nestjs/throttler"
 import { CertificateModule } from './certificate/certificate.module';
+import { MaintenanceScheduleModule } from './maintenance-schedule/maintenance-schedule.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { CertificateModule } from './certificate/certificate.module';
       limit: 10,
     }),
     CertificateModule,
+    MaintenanceScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
