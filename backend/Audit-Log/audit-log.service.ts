@@ -1,22 +1,34 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { AuditLog } from "./entities/audit-log.entity";
-import { CreateAuditLogDto } from "./dto/create-audit-log.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Between, Like } from 'typeorm';
+import { AuditLog } from './entities/audit-log.entity';
 
 @Injectable()
 export class AuditLogService {
   constructor(
     @InjectRepository(AuditLog)
-    private readonly auditLogRepository: Repository<AuditLog>
+    private auditLogRepo: Repository<AuditLog>,
   ) {}
 
-  async create(createAuditLogDto: CreateAuditLogDto): Promise<AuditLog> {
-    const auditLog = this.auditLogRepository.create(createAuditLogDto);
-    return this.auditLogRepository.save(auditLog);
+  create(log: Partial<AuditLog>) {
+    const entry = this.auditLogRepo.create(log);
+    return this.auditLogRepo.save(entry);
   }
 
-  async findAll(): Promise<AuditLog[]> {
-    return this.auditLogRepository.find({ order: { createdAt: "DESC" } });
+  findAll() {
+    return this.auditLogRepo.find({ order: { timestamp: 'DESC' } });
+  }
+
+  findByFilters(actionType?: string, from?: Date, to?: Date, initiator?: string) {
+    const where: any = {};
+
+    if (actionType) where.actionType = Like(`%${actionType}%`);
+    if (initiator) where.initiator = Like(`%${initiator}%`);
+    if (from && to) where.timestamp = Between(from, to);
+
+    return this.auditLogRepo.find({
+      where,
+      order: { timestamp: 'DESC' },
+    });
   }
 }
