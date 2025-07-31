@@ -13,7 +13,7 @@ export interface AuditOptions {
 export const AUDIT_METADATA_KEY = 'audit';
 
 /**
- * Decorator to automatically log audit events for controller methods
+ * Decorators to automatically log audit events for controllers methods
  * 
  * @param options - Audit configuration options
  * 
