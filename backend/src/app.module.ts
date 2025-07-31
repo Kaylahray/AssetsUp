@@ -1,19 +1,16 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ScheduleModule } from "@nestjs/schedule";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
+import { ApiKeysModule } from "./api-keys/api-keys.module";
 import { OrganizationUnitsModule } from "./organization-units/organization-units.module";
 import { ChangeLogModule } from "./change-log/change-log.module";
 import { BarcodeModule } from "./barcode/barcode.module";
-import { ScheduleModule } from "@nestjs/schedule";
 import { ComplianceModule } from "./compliance/compliance.module";
-import { OrganizationUnitsModule } from "./organization-units/organization-units.module";
-import { ChangeLogModule } from "./change-log/change-log.module";
-import { BarcodeModule } from "./barcode/barcode.module";
-import { ScheduleModule } from "@nestjs/schedule";
 import { MobileDevicesModule } from "./mobile-devices/mobile-devices.module";
 import { PolicyDocumentsModule } from "./policy-documents/policy-documents.module";
 import { DeviceHealthModule } from "./device-health/device-health.module";
@@ -42,13 +39,13 @@ import { NotificationsModule } from "./notifications/notifications.module";
     ScheduleModule.forRoot(),
     UsersModule,
     AuthModule,
+    ApiKeysModule,
     OrganizationUnitsModule,
     ChangeLogModule,
     BarcodeModule,
     ComplianceModule,
     MobileDevicesModule,
     PolicyDocumentsModule,
-    WarrantyModule,
     DeviceHealthModule,
     QRCodeModule,
     NotificationsModule,
