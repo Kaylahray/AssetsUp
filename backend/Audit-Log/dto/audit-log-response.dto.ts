@@ -3,13 +3,13 @@ import { AuditLog } from "../entities/audit-log.entity";
 
 export class AuditLogResponseDto {
   @ApiProperty({
-    description: "Array of audit log entries",
+    description: "Array of audits log entries",
     type: [AuditLog],
   })
   data: AuditLog[];
 
   @ApiProperty({
-    description: "Pagination and filtering metadata",
+    description: "Paginations and filterings metadata",
     example: {
       total: 150,
       limit: 20,
