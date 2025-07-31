@@ -1,26 +1,24 @@
-import { Module } from "@nestjs/common"
-import { ConfigModule, ConfigService } from "@nestjs/config"
-import { TypeOrmModule } from "@nestjs/typeorm"
-import { AppController } from "./app.controller"
-import { AppService } from "./app.service"
-import { UsersModule } from "./users/users.module"
-import { AuthModule } from "./auth/auth.module"
-import { AssetsModule } from "./assets/assets.module"
-import { MaintenanceModule } from "./maintenance/maintenance.module"
-import { BranchesModule } from "./branches/branches.module"
-import { StarknetModule } from "./starknet/starknet.module"
-import { InventoryModule } from "./inventory/inventory.module"
-import { NotificationsModule } from "./notifications/notifications.module"
-import { TasksModule } from "./tasks/tasks.module"
-import { AuditModule } from "./audit/audit.module"
-import { ServeStaticModule } from "@nestjs/serve-static"
-import { join } from "path"
-import { ReportsModule } from "./reports/reports.module"
-import { HealthModule } from "./health/health.module"
-import { ScheduleModule } from "@nestjs/schedule"
-import { ThrottlerModule } from "@nestjs/throttler"
-import { CertificateModule } from './certificate/certificate.module';
-import { MaintenanceScheduleModule } from './maintenance-schedule/maintenance-schedule.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { UsersModule } from "./users/users.module";
+import { AuthModule } from "./auth/auth.module";
+import { OrganizationUnitsModule } from "./organization-units/organization-units.module";
+import { ChangeLogModule } from "./change-log/change-log.module";
+import { BarcodeModule } from "./barcode/barcode.module";
+import { ScheduleModule } from "@nestjs/schedule";
+import { ComplianceModule } from "./compliance/compliance.module";
+import { OrganizationUnitsModule } from "./organization-units/organization-units.module";
+import { ChangeLogModule } from "./change-log/change-log.module";
+import { BarcodeModule } from "./barcode/barcode.module";
+import { ScheduleModule } from "@nestjs/schedule";
+import { MobileDevicesModule } from "./mobile-devices/mobile-devices.module";
+import { PolicyDocumentsModule } from "./policy-documents/policy-documents.module";
+import { DeviceHealthModule } from "./device-health/device-health.module";
+import { QRCodeModule } from "./QR-Code/qrcode.module";
+import { NotificationsModule } from "./notifications/notifications.module";
 
 @Module({
   imports: [
@@ -41,29 +39,19 @@ import { MaintenanceScheduleModule } from './maintenance-schedule/maintenance-sc
         synchronize: configService.get("NODE_ENV") !== "production",
       }),
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "uploads"),
-      serveRoot: "/uploads",
-    }),
+    ScheduleModule.forRoot(),
     UsersModule,
     AuthModule,
-    AssetsModule,
-    MaintenanceModule,
-    BranchesModule,
-    StarknetModule,
-    InventoryModule,
+    OrganizationUnitsModule,
+    ChangeLogModule,
+    BarcodeModule,
+    ComplianceModule,
+    MobileDevicesModule,
+    PolicyDocumentsModule,
+    WarrantyModule,
+    DeviceHealthModule,
+    QRCodeModule,
     NotificationsModule,
-    TasksModule,
-    AuditModule,
-    ReportsModule,
-    HealthModule,
-    ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 10,
-    }),
-    CertificateModule,
-    MaintenanceScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
