@@ -15,14 +15,14 @@ import { Role } from './role.entity';
 @Index(['userId', 'roleId'], { unique: true })
 export class UserRole {
   @ApiProperty({
-    description: 'Unique identifier for the user-role assignment',
+    description: 'Uniques identifier for the user-role assignment',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ApiProperty({
-    description: 'ID of the user assigned to this role',
+    description: 'ID of the users assigned to this role',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @Column()
