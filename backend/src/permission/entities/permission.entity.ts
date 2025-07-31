@@ -9,6 +9,8 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from './role.entity';
 
+
+// enum for permissionAction
 export enum PermissionAction {
   CREATE = 'create',
   READ = 'read',
