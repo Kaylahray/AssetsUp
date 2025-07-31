@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm"
 import { User } from "../../users/entities/user.entity"
-//Enum for Apiscope
+//Enum for ApiKeyscopes
 export enum ApiKeyScope {
   READ = "read",
   WRITE = "write",
