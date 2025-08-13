@@ -16,6 +16,7 @@ import { PolicyDocumentsModule } from "./policy-documents/policy-documents.modul
 import { DeviceHealthModule } from "./device-health/device-health.module";
 import { QRCodeModule } from "./QR-Code/qrcode.module";
 import { NotificationsModule } from "./notifications/notifications.module";
+import { StatusHistoryModule } from "./status-history/status-history.module";
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { NotificationsModule } from "./notifications/notifications.module";
     DeviceHealthModule,
     QRCodeModule,
     NotificationsModule,
+    StatusHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
