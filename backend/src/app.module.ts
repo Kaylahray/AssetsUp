@@ -17,6 +17,7 @@ import { DeviceHealthModule } from "./device-health/device-health.module";
 import { QRCodeModule } from "./QR-Code/qrcode.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { StatusHistoryModule } from "./status-history/status-history.module";
+import { VendorDirectoryModule } from "./vendor-directory/vendor-directory.module";
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { StatusHistoryModule } from "./status-history/status-history.module";
     QRCodeModule,
     NotificationsModule,
     StatusHistoryModule,
+    VendorDirectoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
