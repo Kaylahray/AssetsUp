@@ -18,6 +18,7 @@ import { QRCodeModule } from "./QR-Code/qrcode.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { StatusHistoryModule } from "./status-history/status-history.module";
 import { DisposalRegistryModule } from "./disposal-registry/disposal-registry.module";
+import { VendorDirectoryModule } from "./vendor-directory/vendor-directory.module";
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { DisposalRegistryModule } from "./disposal-registry/disposal-registry.mo
     NotificationsModule,
     StatusHistoryModule,
     DisposalRegistryModule,
+    VendorDirectoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
