@@ -21,6 +21,7 @@ import { DisposalRegistryModule } from "./disposal-registry/disposal-registry.mo
 import { VendorDirectoryModule } from "./vendor-directory/vendor-directory.module";
 import { TransferModule } from './transfer/transfer.module';
 import { BarcodesModule } from './barcodes/barcodes.module';
+import { CustomFieldsModule } from "./custom-fields/custom-fields.module"
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { BarcodesModule } from './barcodes/barcodes.module';
     VendorDirectoryModule,
     TransferModule,
     BarcodesModule,
+    CustomFieldsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
