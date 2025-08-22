@@ -22,6 +22,7 @@ import { VendorDirectoryModule } from "./vendor-directory/vendor-directory.modul
 import { TransferModule } from './transfer/transfer.module';
 import { BarcodesModule } from './barcodes/barcodes.module';
 import { CustomFieldsModule } from "./custom-fields/custom-fields.module"
+import { ApprovalEngineModule } from "./approval-engine/approval-engine.module"
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { CustomFieldsModule } from "./custom-fields/custom-fields.module"
     TransferModule,
     BarcodesModule,
     CustomFieldsModule,
+    ApprovalEngineModule,
   ],
   controllers: [AppController],
   providers: [AppService],
