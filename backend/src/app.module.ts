@@ -19,6 +19,8 @@ import { NotificationsModule } from "./notifications/notifications.module";
 import { StatusHistoryModule } from "./status-history/status-history.module";
 import { DisposalRegistryModule } from "./disposal-registry/disposal-registry.module";
 import { VendorDirectoryModule } from "./vendor-directory/vendor-directory.module";
+import { TransferModule } from './transfer/transfer.module';
+import { BarcodesModule } from './barcodes/barcodes.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { VendorDirectoryModule } from "./vendor-directory/vendor-directory.modul
     StatusHistoryModule,
     DisposalRegistryModule,
     VendorDirectoryModule,
+    TransferModule,
+    BarcodesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
