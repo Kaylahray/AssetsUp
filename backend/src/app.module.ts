@@ -18,12 +18,12 @@ import { NotificationsModule } from "./notifications/notifications.module";
 import { StatusHistoryModule } from "./status-history/status-history.module";
 import { DisposalRegistryModule } from "./disposal-registry/disposal-registry.module";
 import { VendorDirectoryModule } from "./vendor-directory/vendor-directory.module";
-import { TransferModule } from "./transfer/transfer.module";
-import { BarcodesModule } from "./barcodes/barcodes.module";
-import { CustomFieldsModule } from "./custom-fields/custom-fields.module";
+import { TransferModule } from './transfer/transfer.module';
+import { BarcodesModule } from './barcodes/barcodes.module';
+import { CustomFieldsModule } from "./custom-fields/custom-fields.module"
+import { ApprovalEngineModule } from "./approval-engine/approval-engine.module"
 import { ComplianceModule } from "./compliance/compliance.module";
 import { ContactModule } from "./contact/contact.module";
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -63,6 +63,7 @@ import { ContactModule } from "./contact/contact.module";
     BarcodesModule,
     CustomFieldsModule,
     ContactModule,
+    ApprovalEngineModule,
   ],
   controllers: [AppController],
   providers: [AppService],
