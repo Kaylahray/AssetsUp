@@ -24,6 +24,7 @@ import { CustomFieldsModule } from "./custom-fields/custom-fields.module"
 import { ApprovalEngineModule } from "./approval-engine/approval-engine.module"
 import { ComplianceModule } from "./compliance/compliance.module";
 import { ContactModule } from "./contact/contact.module";
+
 @Module({
   imports: [
     ConfigModule.forRoot({
