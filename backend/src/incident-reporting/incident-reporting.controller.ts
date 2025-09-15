@@ -1,3 +1,17 @@
+// Simulate POST /incidents/:id/comments
+export function addCommentHandler(reportId: number, commenterId: string, text: string) {
+  return service.addComment(reportId, commenterId, text);
+}
+
+// Simulate GET /incidents/:id/comments
+export function listCommentsHandler(reportId: number) {
+  return service.listComments(reportId);
+}
+
+// Simulate PATCH /incidents/:id/reopen
+export function reopenIncidentHandler(id: number) {
+  return service.reopenReport(id);
+}
 // Mock controller for Incident Reporting (plain functions)
 import { IncidentReportingService } from './incident-reporting.service';
 
@@ -19,7 +33,7 @@ export function deleteIncidentHandler(id: number) {
 }
 
 // Simulate GET /incidents
-export function listIncidentsHandler(filter?: { status?: 'OPEN' | 'RESOLVED'; reporterId?: string; assetRef?: string; from?: Date; to?: Date }) {
+export function listIncidentsHandler(filter?: { status?: 'OPEN' | 'RESOLVED'; reporterId?: string; assetRef?: string; from?: Date; to?: Date; search?: string }) {
   return service.listReports(filter);
 }
 
