@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ScheduleModule } from "@nestjs/schedule";
+import { CustomFieldBuilderModule } from './custom-field-builder/custom-field-builder.module';
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
@@ -63,6 +64,7 @@ import { ContactModule } from "./contact/contact.module";
     TransferModule,
     BarcodesModule,
     CustomFieldsModule,
+  CustomFieldBuilderModule,
     ContactModule,
     ApprovalEngineModule,
   ],
