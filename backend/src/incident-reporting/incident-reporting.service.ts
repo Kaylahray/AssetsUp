@@ -1,9 +1,10 @@
 // In-memory service for incident reports
-import { IncidentReport, IncidentStatus } from './incident-report.entity';
+import { IncidentReport, IncidentStatus, IncidentComment } from './incident-report.entity';
 
 export class IncidentReportingService {
   private reports: IncidentReport[] = [];
   private nextId = 1;
+  private nextCommentId = 1;
 
   createReport(reporterId: string, assetRef: string, description: string, evidenceFile?: string): IncidentReport {
     const report = new IncidentReport(this.nextId++, reporterId, assetRef, description, evidenceFile);
@@ -27,15 +28,43 @@ export class IncidentReportingService {
     return true;
   }
 
-  listReports(filter?: { status?: IncidentStatus; reporterId?: string; assetRef?: string; from?: Date; to?: Date }): IncidentReport[] {
-    if (!filter) return this.reports;
-    return this.reports.filter(r =>
-      (filter.status ? r.status === filter.status : true) &&
-      (filter.reporterId ? r.reporterId === filter.reporterId : true) &&
-      (filter.assetRef ? r.assetRef === filter.assetRef : true) &&
-      (filter.from ? r.createdAt >= filter.from : true) &&
-      (filter.to ? r.createdAt <= filter.to : true)
-    );
+  listReports(filter?: { status?: IncidentStatus; reporterId?: string; assetRef?: string; from?: Date; to?: Date; search?: string }): IncidentReport[] {
+    let results = this.reports;
+    if (filter) {
+      results = results.filter(r =>
+        (filter.status ? r.status === filter.status : true) &&
+        (filter.reporterId ? r.reporterId === filter.reporterId : true) &&
+        (filter.assetRef ? r.assetRef === filter.assetRef : true) &&
+        (filter.from ? r.createdAt >= filter.from : true) &&
+        (filter.to ? r.createdAt <= filter.to : true)
+      );
+      if (filter.search) {
+        const q = filter.search.toLowerCase();
+        results = results.filter(r => r.description.toLowerCase().includes(q));
+      }
+    }
+    return results;
+  }
+  addComment(reportId: number, commenterId: string, text: string): IncidentComment | undefined {
+    const report = this.reports.find(r => r.id === reportId);
+    if (!report) return undefined;
+    const comment = new IncidentComment(this.nextCommentId++, commenterId, text);
+    report.comments.push(comment);
+    return comment;
+  }
+
+  listComments(reportId: number): IncidentComment[] | undefined {
+    const report = this.reports.find(r => r.id === reportId);
+    return report ? report.comments : undefined;
+  }
+
+  reopenReport(id: number): IncidentReport | undefined {
+    const report = this.reports.find(r => r.id === id);
+    if (report && report.status === 'RESOLVED') {
+      report.status = 'OPEN';
+      report.resolvedAt = undefined;
+    }
+    return report;
   }
 
   resolveReport(id: number): IncidentReport | undefined {
