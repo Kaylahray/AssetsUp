@@ -1,10 +1,16 @@
 // Test for Knowledge Base Module (no dependencies)
 
+
 import {
   createArticleHandler,
+  updateArticleHandler,
+  deleteArticleHandler,
   listArticlesHandler,
   searchArticlesHandler,
-  filterArticlesHandler
+  filterArticlesHandler,
+  listCategoriesHandler,
+  listTagsHandler,
+  listAuthorsHandler
 } from './knowledge-base.controller';
 
 // Create articles with different content types and tags
@@ -40,6 +46,15 @@ const a4 = createArticleHandler({
 // List all articles
 console.log('All articles:', listArticlesHandler());
 
+// Update an article
+const updated = updateArticleHandler(a1.id, { title: 'How to register a new asset?', tags: ['registration', 'assets', 'new'] });
+console.log('Updated article:', updated);
+
+// Delete an article
+const deleted = deleteArticleHandler(a2.id);
+console.log('Deleted article result (should be true):', deleted);
+console.log('All articles after delete:', listArticlesHandler());
+
 // Search tests
 console.log('Search "register":', searchArticlesHandler('register'));
 console.log('Search "disposal":', searchArticlesHandler('disposal'));
@@ -56,10 +71,24 @@ console.log('Filter by category "How-To" and tag "how-to":', filterArticlesHandl
 console.log('Filter by category "FAQ" and author "admin1":', filterArticlesHandler({ category: 'FAQ', author: 'admin1' }));
 console.log('Filter by tag "transfer" and author "admin1":', filterArticlesHandler({ tag: 'transfer', author: 'admin1' }));
 
+// Date range filter
+const now = new Date();
+const future = new Date(now.getTime() + 1000 * 60 * 60 * 24); // +1 day
+console.log('Filter by from now:', filterArticlesHandler({ from: now })); // Should be empty
+console.log('Filter by to now:', filterArticlesHandler({ to: now })); // Should include all
+console.log('Filter by from now to future:', filterArticlesHandler({ from: now, to: future })); // Should be empty
+
 // Edge cases
 console.log('Filter by category "Unknown":', filterArticlesHandler({ category: 'Unknown' }));
 console.log('Filter by tag "missing":', filterArticlesHandler({ tag: 'missing' }));
 console.log('Filter by author "ghost":', filterArticlesHandler({ author: 'ghost' }));
+console.log('Update non-existent article:', updateArticleHandler(9999, { title: 'Nope' }));
+console.log('Delete non-existent article:', deleteArticleHandler(9999));
 
 // Search with empty string (should return all)
 console.log('Search with empty string:', searchArticlesHandler(''));
+
+// List unique categories, tags, authors
+console.log('Unique categories:', listCategoriesHandler());
+console.log('Unique tags:', listTagsHandler());
+console.log('Unique authors:', listAuthorsHandler());
