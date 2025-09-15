@@ -19,22 +19,27 @@ export function listFormsHandler() {
   return service.listForms();
 }
 
-// Example usage (mock test):
-if (require.main === module) {
-  // Create a form
-  const form = createFormHandler({
-    name: 'Asset Registration',
-    fields: [
-      { name: 'Serial Number', type: 'text' },
-      { name: 'Category', type: 'dropdown', options: ['Laptop', 'Printer', 'Monitor'] },
-      { name: 'Purchase Date', type: 'date' },
-    ],
-  });
-  console.log('Created form:', form);
+// Simulate PATCH /custom-forms/:id
+export function updateFormHandler(id: number, name: string) {
+  return service.updateForm(id, name);
+}
 
-  // List forms
-  console.log('All forms:', listFormsHandler());
+// Simulate DELETE /custom-forms/:id
+export function deleteFormHandler(id: number) {
+  return service.deleteForm(id);
+}
 
-  // Get form by ID
-  console.log('Get form by ID:', getFormHandler(form.id));
+// Simulate POST /custom-forms/:formId/fields
+export function addFieldHandler(formId: number, field: { name: string; type: CustomFieldType; options?: string[] }) {
+  return service.addField(formId, field);
+}
+
+// Simulate PATCH /custom-forms/:formId/fields/:fieldId
+export function updateFieldHandler(formId: number, fieldId: number, data: { name?: string; type?: CustomFieldType; options?: string[] }) {
+  return service.updateField(formId, fieldId, data);
+}
+
+// Simulate DELETE /custom-forms/:formId/fields/:fieldId
+export function deleteFieldHandler(formId: number, fieldId: number) {
+  return service.deleteField(formId, fieldId);
 }
