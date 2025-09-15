@@ -16,18 +16,42 @@ export class RemoteDeactivationService {
     return req;
   }
 
-  private simulateDeactivation(req: DeactivationRequest) {
-    // Simulate a successful deactivation
-    req.status = 'SUCCESS';
-    this.log(req.id, req.deviceId, 'DEACTIVATED', `Device ${req.deviceId} deactivated successfully.`);
+  // Simulate a successful or failed deactivation
+  private simulateDeactivation(req: DeactivationRequest, forceFail = false) {
+    if (forceFail) {
+      req.status = 'FAILED';
+      this.log(req.id, req.deviceId, 'FAILED', `Device ${req.deviceId} deactivation failed.`);
+    } else {
+      req.status = 'SUCCESS';
+      this.log(req.id, req.deviceId, 'DEACTIVATED', `Device ${req.deviceId} deactivated successfully.`);
+    }
+  }
+
+  // Public method to force failure (for testing)
+  failRequest(id: number): boolean {
+    const req = this.requests.find(r => r.id === id);
+    if (!req || req.status !== 'PENDING') return false;
+    this.simulateDeactivation(req, true);
+    return true;
+  }
+
+  // Cancel a request (if still pending)
+  cancelRequest(id: number, cancellerId: string): boolean {
+    const req = this.requests.find(r => r.id === id);
+    if (!req || req.status !== 'PENDING') return false;
+    req.status = 'FAILED';
+    this.log(req.id, req.deviceId, 'CANCELLED', `Request cancelled by ${cancellerId}`);
+    return true;
+  }
+
+  // Filter requests by status
+  listRequests(status?: 'PENDING' | 'SUCCESS' | 'FAILED'): DeactivationRequest[] {
+    if (status) return this.requests.filter(r => r.status === status);
+    return this.requests;
   }
 
   private log(requestId: number, deviceId: string, action: string, details: string) {
     this.auditLogs.push(new DeactivationAuditLog(this.nextAuditId++, requestId, deviceId, action, details));
-  }
-
-  listRequests(): DeactivationRequest[] {
-    return this.requests;
   }
 
   getAuditLogs(requestId?: number): DeactivationAuditLog[] {
