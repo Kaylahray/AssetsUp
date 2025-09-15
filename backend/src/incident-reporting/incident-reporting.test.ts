@@ -7,8 +7,28 @@ import {
   listIncidentsHandler,
   resolveIncidentHandler,
   listReporterIdsHandler,
-  listAssetRefsHandler
+  listAssetRefsHandler,
+  addCommentHandler,
+  listCommentsHandler,
+  reopenIncidentHandler
 } from './incident-reporting.controller';
+
+// Add comments (after r1 is declared)
+const c1 = addCommentHandler(r1.id, 'admin', 'Please provide more details.');
+const c2 = addCommentHandler(r1.id, 'user1', 'Uploaded a clearer photo.');
+console.log('Comments for r1:', listCommentsHandler(r1.id));
+
+// Search by description
+console.log('Search "damaged":', listIncidentsHandler({ search: 'damaged' }));
+console.log('Search "unauthorized":', listIncidentsHandler({ search: 'unauthorized' }));
+console.log('Search "notfound":', listIncidentsHandler({ search: 'notfound' }));
+
+// Reopen a resolved incident (after r2 is declared)
+const reopened = reopenIncidentHandler(r2.id);
+console.log('Reopened incident:', reopened);
+console.log('All incidents after reopen:', listIncidentsHandler());
+console.log('Open incidents after reopen:', listIncidentsHandler({ status: 'OPEN' }));
+console.log('Resolved incidents after reopen:', listIncidentsHandler({ status: 'RESOLVED' }));
 
 // Create incidents
 const r1 = createIncidentHandler({
