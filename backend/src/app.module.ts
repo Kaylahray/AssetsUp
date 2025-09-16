@@ -28,6 +28,7 @@ import { ContactModule } from "./contact/contact.module";
 import { SLAModule } from "./sla-management/sla.module";
 import { InsuranceModule } from "./insurance-tracker/insurance.module";
 import { BlockchainEventsModule } from "./blockchain-events-logger/blockchain-events.module";
+import { FeedbackSupportModule } from "./feedback-support/feedback-support.module";
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { BlockchainEventsModule } from "./blockchain-events-logger/blockchain-ev
     SLAModule,
     InsuranceModule,
     BlockchainEventsModule,
+    FeedbackSupportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
