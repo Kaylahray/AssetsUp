@@ -26,6 +26,7 @@ import { ApprovalEngineModule } from "./approval-engine/approval-engine.module"
 import { ComplianceModule } from "./compliance/compliance.module";
 import { ContactModule } from "./contact/contact.module";
 import { SLAModule } from "./sla-management/sla.module";
+import { InsuranceModule } from "./insurance-tracker/insurance.module";
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { SLAModule } from "./sla-management/sla.module";
     ContactModule,
     ApprovalEngineModule,
     SLAModule,
+    InsuranceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
