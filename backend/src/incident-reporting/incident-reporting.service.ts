@@ -1,86 +1,100 @@
-// In-memory service for incident reports
-import { IncidentReport, IncidentStatus, IncidentComment } from './incident-report.entity';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, FindOptionsWhere, ILike } from 'typeorm';
+import { IncidentReport, IncidentStatus, IncidentReportType } from './incident-report.entity';
+import { NotificationsService } from '../notifications/notifications.service';
+import { CreateNotificationDto } from '../notifications/dto/create-notification.dto';
 
+import { CreateIncidentDto } from './dto/create-incident.dto';
+import { UpdateIncidentDto } from './dto/update-incident.dto';
+
+export interface ListIncidentsQuery {
+  status?: IncidentStatus;
+  reportType?: IncidentReportType;
+  submittedBy?: string;
+  referenceId?: string;
+  search?: string;
+}
+
+@Injectable()
 export class IncidentReportingService {
-  private reports: IncidentReport[] = [];
-  private nextId = 1;
-  private nextCommentId = 1;
+  constructor(
+    @InjectRepository(IncidentReport)
+    private readonly repo: Repository<IncidentReport>,
+    private readonly notifications: NotificationsService,
+  ) {}
 
-  createReport(reporterId: string, assetRef: string, description: string, evidenceFile?: string): IncidentReport {
-    const report = new IncidentReport(this.nextId++, reporterId, assetRef, description, evidenceFile);
-    this.reports.push(report);
-    return report;
+  async create(data: CreateIncidentDto): Promise<IncidentReport> {
+    const entity = this.repo.create({ ...data });
+    return this.repo.save(entity);
   }
 
-  updateReport(id: number, data: { assetRef?: string; description?: string; evidenceFile?: string }): IncidentReport | undefined {
-    const report = this.reports.find(r => r.id === id);
-    if (!report) return undefined;
-    if (data.assetRef) report.assetRef = data.assetRef;
-    if (data.description) report.description = data.description;
-    if (data.evidenceFile) report.evidenceFile = data.evidenceFile;
-    return report;
-  }
-
-  deleteReport(id: number): boolean {
-    const idx = this.reports.findIndex(r => r.id === id);
-    if (idx === -1) return false;
-    this.reports.splice(idx, 1);
-    return true;
-  }
-
-  listReports(filter?: { status?: IncidentStatus; reporterId?: string; assetRef?: string; from?: Date; to?: Date; search?: string }): IncidentReport[] {
-    let results = this.reports;
-    if (filter) {
-      results = results.filter(r =>
-        (filter.status ? r.status === filter.status : true) &&
-        (filter.reporterId ? r.reporterId === filter.reporterId : true) &&
-        (filter.assetRef ? r.assetRef === filter.assetRef : true) &&
-        (filter.from ? r.createdAt >= filter.from : true) &&
-        (filter.to ? r.createdAt <= filter.to : true)
-      );
-      if (filter.search) {
-        const q = filter.search.toLowerCase();
-        results = results.filter(r => r.description.toLowerCase().includes(q));
-      }
+  async update(id: string, data: UpdateIncidentDto): Promise<IncidentReport> {
+    const existing = await this.repo.findOne({ where: { id } });
+    if (!existing) throw new NotFoundException('Incident report not found');
+    // Prevent illegal status jumps via update; use close/escalate endpoints
+    if (data.status && data.status !== existing.status) {
+      throw new BadRequestException('Use dedicated endpoints to change status');
     }
-    return results;
-  }
-  addComment(reportId: number, commenterId: string, text: string): IncidentComment | undefined {
-    const report = this.reports.find(r => r.id === reportId);
-    if (!report) return undefined;
-    const comment = new IncidentComment(this.nextCommentId++, commenterId, text);
-    report.comments.push(comment);
-    return comment;
+    const merged = this.repo.merge(existing, data);
+    return this.repo.save(merged);
   }
 
-  listComments(reportId: number): IncidentComment[] | undefined {
-    const report = this.reports.find(r => r.id === reportId);
-    return report ? report.comments : undefined;
+  async close(id: string): Promise<IncidentReport> {
+    const report = await this.repo.findOne({ where: { id } });
+    if (!report) throw new NotFoundException('Incident report not found');
+    if (report.status === IncidentStatus.CLOSED) return report;
+    report.status = IncidentStatus.CLOSED;
+    return this.repo.save(report);
   }
 
-  reopenReport(id: number): IncidentReport | undefined {
-    const report = this.reports.find(r => r.id === id);
-    if (report && report.status === 'RESOLVED') {
-      report.status = 'OPEN';
-      report.resolvedAt = undefined;
+  async escalate(id: string): Promise<IncidentReport> {
+    const report = await this.repo.findOne({ where: { id } });
+    if (!report) throw new NotFoundException('Incident report not found');
+    if (report.status === IncidentStatus.ESCALATED) return report;
+    report.status = IncidentStatus.ESCALATED;
+    const saved = await this.repo.save(report);
+    // Mock notification trigger to an admin/escalation queue
+    const payload: CreateNotificationDto = {
+      senderId: report.submittedBy,
+      receiverId: 'admin',
+      message: `Incident escalated: ${report.title} (${report.reportType})`,
+    };
+    try {
+      await this.notifications.create(payload);
+    } catch (e) {
+      // best-effort; do not fail escalation on notification errors
     }
+    return saved;
+  }
+
+  async findById(id: string): Promise<IncidentReport> {
+    const report = await this.repo.findOne({ where: { id } });
+    if (!report) throw new NotFoundException('Incident report not found');
     return report;
   }
 
-  resolveReport(id: number): IncidentReport | undefined {
-    const report = this.reports.find(r => r.id === id);
-    if (report && report.status === 'OPEN') {
-      report.status = 'RESOLVED';
-      report.resolvedAt = new Date();
-    }
-    return report;
-  }
+  async list(query: ListIncidentsQuery = {}): Promise<IncidentReport[]> {
+    const where: FindOptionsWhere<IncidentReport> = {};
+    if (query.status) where.status = query.status;
+    if (query.reportType) where.reportType = query.reportType;
+    if (query.submittedBy) where.submittedBy = query.submittedBy;
+    if (query.referenceId) where.referenceId = query.referenceId;
 
-  listReporterIds(): string[] {
-    return Array.from(new Set(this.reports.map(r => r.reporterId)));
-  }
-
-  listAssetRefs(): string[] {
-    return Array.from(new Set(this.reports.map(r => r.assetRef)));
+    return this.repo.find({
+      where: [
+        {
+          ...where,
+          ...(query.search
+            ? { description: ILike(`%${query.search}%`) }
+            : {}),
+        },
+        {
+          ...where,
+          ...(query.search ? { title: ILike(`%${query.search}%`) } : {}),
+        },
+      ],
+      order: { createdAt: 'DESC' },
+    });
   }
 }
