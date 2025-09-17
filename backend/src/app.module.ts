@@ -25,6 +25,10 @@ import { CustomFieldsModule } from "./custom-fields/custom-fields.module"
 import { ApprovalEngineModule } from "./approval-engine/approval-engine.module"
 import { ComplianceModule } from "./compliance/compliance.module";
 import { ContactModule } from "./contact/contact.module";
+import { SLAModule } from "./sla-management/sla.module";
+import { InsuranceModule } from "./insurance-tracker/insurance.module";
+import { BlockchainEventsModule } from "./blockchain-events-logger/blockchain-events.module";
+import { FeedbackSupportModule } from "./feedback-support/feedback-support.module";
 import { AssetLoansModule } from "./asset-loans/asset-loans.module";
 import { IncidentReportingModule } from "./incident-reporting/incident-reporting.module";
 
@@ -69,6 +73,10 @@ import { IncidentReportingModule } from "./incident-reporting/incident-reporting
   CustomFieldBuilderModule,
     ContactModule,
     ApprovalEngineModule,
+    SLAModule,
+    InsuranceModule,
+    BlockchainEventsModule,
+    FeedbackSupportModule,
     AssetLoansModule,
     IncidentReportingModule,
   ],
