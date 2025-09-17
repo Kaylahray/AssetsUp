@@ -29,6 +29,8 @@ import { SLAModule } from "./sla-management/sla.module";
 import { InsuranceModule } from "./insurance-tracker/insurance.module";
 import { BlockchainEventsModule } from "./blockchain-events-logger/blockchain-events.module";
 import { FeedbackSupportModule } from "./feedback-support/feedback-support.module";
+import { AssetLoansModule } from "./asset-loans/asset-loans.module";
+import { IncidentReportingModule } from "./incident-reporting/incident-reporting.module";
 
 @Module({
   imports: [
@@ -75,6 +77,8 @@ import { FeedbackSupportModule } from "./feedback-support/feedback-support.modul
     InsuranceModule,
     BlockchainEventsModule,
     FeedbackSupportModule,
+    AssetLoansModule,
+    IncidentReportingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
