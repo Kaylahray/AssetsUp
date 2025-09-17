@@ -17,18 +17,12 @@ console.log('Open incidents after reopen:', listIncidentsHandler({ status: 'OPEN
 console.log('Resolved incidents after reopen:', listIncidentsHandler({ status: 'RESOLVED' }));
 // Test for Incident Reporting Module (no dependencies)
 
-import {
-  createIncidentHandler,
-  updateIncidentHandler,
-  deleteIncidentHandler,
-  listIncidentsHandler,
-  resolveIncidentHandler,
-  listReporterIdsHandler,
-  listAssetRefsHandler,
-  addCommentHandler,
-  listCommentsHandler,
-  reopenIncidentHandler
-} from './incident-reporting.controller';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { IncidentReportingModule } from './incident-reporting.module';
+import { IncidentReport, IncidentReportType, IncidentStatus } from './incident-report.entity';
 
 
 
@@ -36,67 +30,70 @@ import {
 
 
 
-// Create incidents
-const r1 = createIncidentHandler({
-  reporterId: 'user1',
-  assetRef: 'ASSET-001',
-  description: 'Laptop was found damaged.',
-  evidenceFile: 'photo1.jpg'
+describe('IncidentReporting (e2e)', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: ':memory:',
+          entities: [IncidentReport],
+          synchronize: true,
+        }),
+        IncidentReportingModule,
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('should create, list, update, escalate, close', async () => {
+    const createDto = {
+      title: 'Damaged asset',
+      description: 'Screen cracked',
+      reportType: IncidentReportType.ASSET_ISSUE,
+      referenceId: 'ASSET-001',
+      submittedBy: 'user-1',
+    };
+
+    const createRes = await request(app.getHttpServer())
+      .post('/incident-reports')
+      .send(createDto)
+      .expect(201);
+    expect(createRes.body.id).toBeDefined();
+    expect(createRes.body.status).toBe(IncidentStatus.OPEN);
+
+    const id = createRes.body.id;
+
+    await request(app.getHttpServer())
+      .get('/incident-reports')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.length).toBe(1);
+      });
+
+    const updateDto = { description: 'Screen cracked badly' };
+    const updateRes = await request(app.getHttpServer())
+      .patch(`/incident-reports/${id}`)
+      .send(updateDto)
+      .expect(200);
+    expect(updateRes.body.description).toBe(updateDto.description);
+
+    const escalateRes = await request(app.getHttpServer())
+      .patch(`/incident-reports/${id}/escalate`)
+      .expect(200);
+    expect(escalateRes.body.status).toBe(IncidentStatus.ESCALATED);
+
+    const closeRes = await request(app.getHttpServer())
+      .patch(`/incident-reports/${id}/close`)
+      .expect(200);
+    expect(closeRes.body.status).toBe(IncidentStatus.CLOSED);
+  });
 });
-const r2 = createIncidentHandler({
-  reporterId: 'user2',
-  assetRef: 'ASSET-002',
-  description: 'Asset lost during transfer.'
-});
-const r3 = createIncidentHandler({
-  reporterId: 'user3',
-  assetRef: 'ASSET-003',
-  description: 'Unauthorized use detected.',
-  evidenceFile: 'log.txt'
-});
-const r4 = createIncidentHandler({
-  reporterId: 'user1',
-  assetRef: 'ASSET-002',
-  description: 'Asset 002 was found in the wrong location.'
-});
-
-// List all incidents
-console.log('All incidents:', listIncidentsHandler());
-
-// Update an incident
-const updated = updateIncidentHandler(r1.id, { description: 'Laptop was found severely damaged.', evidenceFile: 'photo2.jpg' });
-console.log('Updated incident:', updated);
-
-// Delete an incident
-const deleted = deleteIncidentHandler(r3.id);
-console.log('Deleted incident result (should be true):', deleted);
-console.log('All incidents after delete:', listIncidentsHandler());
-
-// Filtering
-console.log('Open incidents:', listIncidentsHandler({ status: 'OPEN' }));
-console.log('Incidents for user1:', listIncidentsHandler({ reporterId: 'user1' }));
-console.log('Incidents for ASSET-002:', listIncidentsHandler({ assetRef: 'ASSET-002' }));
-
-// Date range filter
-const now = new Date();
-const future = new Date(now.getTime() + 1000 * 60 * 60 * 24); // +1 day
-console.log('Incidents from now (should be empty):', listIncidentsHandler({ from: now }));
-console.log('Incidents to now (should include all):', listIncidentsHandler({ to: now }));
-
-// Resolve one incident
-const resolved = resolveIncidentHandler(r2.id);
-console.log('Resolved incident:', resolved);
-console.log('All incidents after resolve:', listIncidentsHandler());
-console.log('Resolved incidents:', listIncidentsHandler({ status: 'RESOLVED' }));
-
-// Try to resolve already resolved
-const resolveAgain = resolveIncidentHandler(r2.id);
-console.log('Resolve already resolved (should be unchanged):', resolveAgain);
-
-// Edge cases
-console.log('Update non-existent incident:', updateIncidentHandler(9999, { description: 'Nope' }));
-console.log('Delete non-existent incident:', deleteIncidentHandler(9999));
-
-// List unique reporterIds and assetRefs
-console.log('Unique reporterIds:', listReporterIdsHandler());
-console.log('Unique assetRefs:', listAssetRefsHandler());

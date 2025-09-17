@@ -1,38 +1,52 @@
-// Entity for incident reports
-export type IncidentStatus = 'OPEN' | 'RESOLVED';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from "typeorm";
 
-export class IncidentComment {
-  id: number;
-  commenterId: string;
-  text: string;
-  timestamp: Date;
-  constructor(id: number, commenterId: string, text: string) {
-    this.id = id;
-    this.commenterId = commenterId;
-    this.text = text;
-    this.timestamp = new Date();
-  }
+export enum IncidentReportType {
+  ASSET_ISSUE = "Asset Issue",
+  USER_COMPLAINT = "User Complaint",
+  VENDOR_PERFORMANCE = "Vendor Performance",
+  SYSTEM_BUG = "System Bug",
 }
 
-export class IncidentReport {
-  id: number;
-  reporterId: string;
-  assetRef: string;
-  description: string;
-  status: IncidentStatus;
-  evidenceFile?: string;
-  createdAt: Date;
-  resolvedAt?: Date;
-  comments: IncidentComment[];
+export enum IncidentStatus {
+  OPEN = "OPEN",
+  IN_PROGRESS = "IN_PROGRESS",
+  ESCALATED = "ESCALATED",
+  CLOSED = "CLOSED",
+}
 
-  constructor(id: number, reporterId: string, assetRef: string, description: string, evidenceFile?: string) {
-    this.id = id;
-    this.reporterId = reporterId;
-    this.assetRef = assetRef;
-    this.description = description;
-    this.status = 'OPEN';
-    this.evidenceFile = evidenceFile;
-    this.createdAt = new Date();
-    this.comments = [];
-  }
+@Entity("incident_reports")
+export class IncidentReport {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
+
+  @Column({ length: 200 })
+  title: string;
+
+  @Column("text")
+  description: string;
+
+  @Column({ type: "enum", enum: IncidentReportType })
+  @Index()
+  reportType: IncidentReportType;
+
+  @Column({ nullable: true })
+  @Index()
+  referenceId?: string;
+
+  @Column()
+  @Index()
+  submittedBy: string;
+
+  @Column({ type: "enum", enum: IncidentStatus, default: IncidentStatus.OPEN })
+  @Index()
+  status: IncidentStatus;
+
+  @Column("simple-array", { nullable: true })
+  attachments?: string[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

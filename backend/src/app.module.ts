@@ -25,6 +25,8 @@ import { CustomFieldsModule } from "./custom-fields/custom-fields.module"
 import { ApprovalEngineModule } from "./approval-engine/approval-engine.module"
 import { ComplianceModule } from "./compliance/compliance.module";
 import { ContactModule } from "./contact/contact.module";
+import { AssetLoansModule } from "./asset-loans/asset-loans.module";
+import { IncidentReportingModule } from "./incident-reporting/incident-reporting.module";
 
 @Module({
   imports: [
@@ -67,6 +69,8 @@ import { ContactModule } from "./contact/contact.module";
   CustomFieldBuilderModule,
     ContactModule,
     ApprovalEngineModule,
+    AssetLoansModule,
+    IncidentReportingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

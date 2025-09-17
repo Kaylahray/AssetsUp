@@ -1,53 +1,69 @@
-// Simulate POST /incidents/:id/comments
-export function addCommentHandler(reportId: number, commenterId: string, text: string) {
-  return service.addComment(reportId, commenterId, text);
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import { IncidentReportingService, ListIncidentsQuery } from './incident-reporting.service';
+import { CreateIncidentDto } from './dto/create-incident.dto';
+import { UpdateIncidentDto } from './dto/update-incident.dto';
+import { IncidentReport } from './incident-report.entity';
+
+function incidentFilenameFactory(req, file, cb) {
+  const unique = `${uuidv4()}${path.extname(file.originalname)}`;
+  cb(null, unique);
 }
 
-// Simulate GET /incidents/:id/comments
-export function listCommentsHandler(reportId: number) {
-  return service.listComments(reportId);
-}
+@Controller('incident-reports')
+export class IncidentReportingController {
+  constructor(private readonly service: IncidentReportingService) {}
 
-// Simulate PATCH /incidents/:id/reopen
-export function reopenIncidentHandler(id: number) {
-  return service.reopenReport(id);
-}
-// Mock controller for Incident Reporting (plain functions)
-import { IncidentReportingService } from './incident-reporting.service';
+  @Post()
+  @UseInterceptors(
+    FilesInterceptor('attachments', 5, {
+      storage: diskStorage({
+        destination: 'uploads/incidents',
+        filename: incidentFilenameFactory,
+      }),
+      fileFilter: (req, file, cb) => {
+        const allowed = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+        if (!file.mimetype || !allowed.includes(file.mimetype)) {
+          return cb(new BadRequestException('Only images or PDFs are allowed') as any, false);
+        }
+        cb(null, true);
+      },
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
+  )
+  async create(
+    @Body() body: Omit<CreateIncidentDto, 'attachments'>,
+    @UploadedFiles() files?: Express.Multer.File[],
+  ): Promise<IncidentReport> {
+    const attachments = files?.map((f) => `/uploads/incidents/${f.filename}`);
+    return this.service.create({ ...body, attachments });
+  }
 
-const service = new IncidentReportingService();
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() body: UpdateIncidentDto): Promise<IncidentReport> {
+    return this.service.update(id, body);
+  }
 
-// Simulate POST /incidents
-export function createIncidentHandler(body: { reporterId: string; assetRef: string; description: string; evidenceFile?: string }) {
-  return service.createReport(body.reporterId, body.assetRef, body.description, body.evidenceFile);
-}
+  @Patch(':id/close')
+  async close(@Param('id') id: string): Promise<IncidentReport> {
+    return this.service.close(id);
+  }
 
-// Simulate PATCH /incidents/:id
-export function updateIncidentHandler(id: number, data: { assetRef?: string; description?: string; evidenceFile?: string }) {
-  return service.updateReport(id, data);
-}
+  @Patch(':id/escalate')
+  async escalate(@Param('id') id: string): Promise<IncidentReport> {
+    return this.service.escalate(id);
+  }
 
-// Simulate DELETE /incidents/:id
-export function deleteIncidentHandler(id: number) {
-  return service.deleteReport(id);
-}
+  @Get()
+  async list(@Query() query: ListIncidentsQuery): Promise<IncidentReport[]> {
+    return this.service.list(query);
+  }
 
-// Simulate GET /incidents
-export function listIncidentsHandler(filter?: { status?: 'OPEN' | 'RESOLVED'; reporterId?: string; assetRef?: string; from?: Date; to?: Date; search?: string }) {
-  return service.listReports(filter);
-}
-
-// Simulate PATCH /incidents/:id/resolve
-export function resolveIncidentHandler(id: number) {
-  return service.resolveReport(id);
-}
-
-// Simulate GET /incidents/reporters
-export function listReporterIdsHandler() {
-  return service.listReporterIds();
-}
-
-// Simulate GET /incidents/assets
-export function listAssetRefsHandler() {
-  return service.listAssetRefs();
+  @Get(':id')
+  async get(@Param('id') id: string): Promise<IncidentReport> {
+    return this.service.findById(id);
+  }
 }
