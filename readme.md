@@ -18,7 +18,7 @@ A comprehensive asset management system with blockchain transparency via Stellar
 
 - **Frontend**: Next.js 14 (App Router), TypeScript, TailwindCSS, shadcn/ui
 - **Backend**: NestJS, TypeORM, PostgreSQL
-- **Blockchain**: Stellar (Cairo 1.0) for on-chain transparency
+- **Blockchain**: Stellar for payments
 - **Authentication**: JWT with role-based access control
 - **Real-time**: WebSockets for notifications
 - **File Storage**: Local storage with cloud integration support
