@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Assets Up",
-  description: "Modern Aseets and Inventory Management Platform",
+  description: "Modern Assets and Inventory Management Platform",
 };
 
 export default function RootLayout({
