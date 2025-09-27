@@ -1,24 +1,8 @@
-[package]
-name = "assetsup-contract"
-version = "0.1.0"
-authors = ["AssetsUp Team"]
-license = "MIT"
-edition = "2021"
-publish = false
-rust-version = "1.74"
+[workspace]
+resolver = "2"
+members = [
+  "./hello-world",
+]
 
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-soroban-sdk = "21.4.0"
-
-[dev-dependencies]
-soroban-sdk = { version = "21.4.0", features = ["testutils"] }
-
-[features]
-testutils = ["soroban-sdk/testutils"]
-
-[[bin]]
-name = "assetsup-contract"
-path = "src/lib.rs"
+[workspace.dependencies]
+soroban-sdk = "22"
