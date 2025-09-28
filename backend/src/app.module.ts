@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssetCategoriesModule } from './asset-categories/asset-categories.module';
+import { SettingsModule } from './settings/settings.module';
 import { AssetCategory } from './asset-categories/asset-category.entity';
 import { DepartmentsModule } from './departments/departments.module';
 import { Department } from './departments/department.entity';
@@ -27,8 +28,9 @@ import { Department } from './departments/department.entity';
       }),
       inject: [ConfigService],
     }),
-    AssetCategoriesModule,
-    DepartmentsModule,
+  AssetCategoriesModule,
+  DepartmentsModule,
+  SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
