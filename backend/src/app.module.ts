@@ -14,23 +14,7 @@ import { Department } from './departments/department.entity';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule,
-         // --- ADD THIS CONFIGURATION ---
-      I18nModule.forRoot({
-      fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '/i18n/'), // Directory for translation files
-        watch: true, // Watch for changes in translation files
-      },
-      resolvers: [
-        // Order matters: checks query param, then header, then browser settings
-        new QueryResolver(['lang', 'l']),
-        new HeaderResolver(['x-custom-lang-header']),
-        AcceptLanguageResolver, // Standard 'Accept-Language' header
-      ],
-    }),
-    // --- END OF CONFIGURATION ---
-  ],],
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('DB_HOST', 'localhost'),
