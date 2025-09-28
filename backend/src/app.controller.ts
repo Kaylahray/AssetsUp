@@ -18,4 +18,14 @@ export class AppController {
       Timestamp: Date.now(),
     };
   }
+
+  @Get('hello')
+  getHello() {
+    return this.appService.getHello();
+  }
+
+  @Get('not-found')
+  getNotFound() {
+    return this.appService.getNotFoundError();
+  }
 }
