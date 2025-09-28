@@ -1,5 +1,8 @@
 #![no_std]
+mod error;
+
 use soroban_sdk::{contract, contracttype, contractimpl, Address, Env};
+use crate::error::{Error, handle_error};
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -12,17 +15,25 @@ pub struct AssetUpContract;
 
 #[contractimpl]
 impl AssetUpContract {
-    pub fn initialize(env: Env, admin: Address){
+    pub fn initialize(env: Env, admin: Address) -> Result<(), Error>{
         admin.require_auth();
 
         if env.storage().persistent().has(&DataKey::Admin) {
-            panic!("Contract is already initialized");
+            handle_error(&env, Error::AlreadyInitialized)
+
         }
-        env.storage().persistent().set(&DataKey::Admin, &admin);
+        Ok(env.storage().persistent().set(&DataKey::Admin, &admin))
     }
 
-    pub fn get_admin(env: Env) -> Address {
-        env.storage().persistent().get(&DataKey::Admin).unwrap()
+    pub fn get_admin(env: Env) -> Result<Address, Error> {
+        let key = DataKey::Admin;
+        if !env.storage().persistent().has(&key) {
+            handle_error(&env, Error::AdminNotFound)
+        }
+
+        let admin = env.storage().persistent().get(&key).unwrap();
+        Ok(admin)
+
     }
 }
 

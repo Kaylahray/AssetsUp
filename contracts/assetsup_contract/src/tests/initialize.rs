@@ -30,9 +30,16 @@ fn test_initialize() {
 
 
 #[test]
-#[should_panic()]
+#[should_panic(expected = "Error(Contract, #1)")]
 fn test_initialize_panic() {
     let (_env, client, admin) = setup_test_environment();
     client.initialize(&admin);
     client.initialize(&admin);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #2)")]
+fn test_admin_doesnt_exist() {
+    let (_env, client, _) = setup_test_environment();
+    client.get_admin();
 }
