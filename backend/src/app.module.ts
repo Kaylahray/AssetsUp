@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssetCategoriesModule } from './asset-categories/asset-categories.module';
 import { AssetCategory } from './asset-categories/asset-category.entity';
+import { DepartmentsModule } from './departments/departments.module';
+import { Department } from './departments/department.entity';
 
 @Module({
   imports: [
@@ -20,12 +22,13 @@ import { AssetCategory } from './asset-categories/asset-category.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_DATABASE', 'manage_assets'),
-        entities: [AssetCategory],
+        entities: [AssetCategory, Department],
         synchronize: configService.get('NODE_ENV') !== 'production', // Only for development
       }),
       inject: [ConfigService],
     }),
     AssetCategoriesModule,
+    DepartmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
