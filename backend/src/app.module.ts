@@ -10,6 +10,8 @@ import { Department } from './departments/department.entity';
 import { AssetDisposalsModule } from './asset-disposals/asset-disposals.module';
 import { AssetDisposal } from './asset-disposals/entities/asset-disposal.entity';
 import { InventoryItem } from './inventory/entities/inventory-item.entity';
+import { AssetMaintenanceModule } from './asset-maintenance/asset-maintenance.module';
+import { AssetMaintenance } from './asset-maintenance/entities/asset-maintenance.entity';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { InventoryItem } from './inventory/entities/inventory-item.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_DATABASE', 'manage_assets'),
-        entities: [AssetCategory, Department, InventoryItem, AssetDisposal],
+        entities: [AssetCategory, Department, InventoryItem, AssetDisposal, AssetMaintenance],
         synchronize: configService.get('NODE_ENV') !== 'production', // Only for development
       }),
       inject: [ConfigService],
@@ -33,6 +35,7 @@ import { InventoryItem } from './inventory/entities/inventory-item.entity';
     AssetCategoriesModule,
     DepartmentsModule,
     AssetDisposalsModule,
+    AssetMaintenanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
