@@ -1,5 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+export enum InventoryStatus {
+  ACTIVE = 'active',
+  DISPOSED = 'disposed',
+}
+
 @Entity()
 export class InventoryItem {
   @PrimaryGeneratedColumn('uuid')
@@ -14,7 +19,10 @@ export class InventoryItem {
   @Column({ type: 'int' })
   quantity: number;
 
-  // --- ADD THIS NEW FIELD ---
-  @Column({ type: 'int', default: 10 }) // Default threshold of 10 units
+  // Default threshold of 10 units
+  @Column({ type: 'int', default: 10 })
   threshold: number;
+
+  @Column({ type: 'enum', enum: InventoryStatus, default: InventoryStatus.ACTIVE })
+  status: InventoryStatus;
 }

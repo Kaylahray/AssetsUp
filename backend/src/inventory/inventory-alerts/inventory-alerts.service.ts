@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InventoryItem } from '../inventory/entities/inventory-item.entity';
+import { InventoryItem, InventoryStatus } from '../entities/inventory-item.entity';
 
 export interface LowStockAlert {
   itemId: string;
@@ -38,6 +38,15 @@ export class InventoryAlertsService {
       return;
     }
 
+    // Ignore disposed items
+    if (item.status === InventoryStatus.DISPOSED) {
+      if (this.activeAlerts.has(item.id)) {
+        this.activeAlerts.delete(item.id);
+      }
+      this.logger.log(`Skipping threshold check for disposed item ${item.name} (SKU: ${item.sku}).`);
+      return;
+    }
+
     if (item.quantity <= item.threshold) {
       // Stock is low or has reached the threshold, create/update an alert.
       if (!this.activeAlerts.has(item.id)) {
@@ -51,8 +60,6 @@ export class InventoryAlertsService {
         };
         this.activeAlerts.set(item.id, newAlert);
         this.logger.log(`New low-stock alert generated for ${item.name} (SKU: ${item.sku})`);
-        // Here you could also emit an event to trigger notifications (email, etc.)
-        // this.eventEmitter.emit('alert.low_stock', newAlert);
       }
     } else {
       // Stock is sufficient, remove any existing alert.
