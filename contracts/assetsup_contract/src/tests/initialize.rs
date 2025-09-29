@@ -1,10 +1,9 @@
-
 #![cfg(test)]
 
 extern crate std;
 
-use soroban_sdk::{testutils::{Address as _,}, Address, Env};
 use crate::{AssetUpContract, AssetUpContractClient};
+use soroban_sdk::{Address, Env, testutils::Address as _};
 
 /// Setup test environment with contract and addresses
 pub fn setup_test_environment() -> (Env, AssetUpContractClient<'static>, Address) {
@@ -13,9 +12,9 @@ pub fn setup_test_environment() -> (Env, AssetUpContractClient<'static>, Address
 
     let contract_id = env.register(AssetUpContract, ());
     let client = AssetUpContractClient::new(&env, &contract_id);
-    
+
     let admin = Address::generate(&env);
-    
+
     (env, client, admin)
 }
 
@@ -27,7 +26,6 @@ fn test_initialize() {
 
     assert_eq!(admin, saved_admin);
 }
-
 
 #[test]
 #[should_panic()]
