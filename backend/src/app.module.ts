@@ -9,6 +9,9 @@ import { DepartmentsModule } from './departments/departments.module';
 import { Department } from './departments/department.entity';
 import { AssetDepreciationModule } from './asset-depreciation/asset-depreciation.module';
 import { AssetDepreciation } from './asset-depreciation/entities/asset-depreciation.entity';
+import { ProcurementModule } from './procurement/procurement.module';
+import { ProcurementRequest } from './procurement/entities/procurement-request.entity';
+import { AssetRegistration } from './procurement/entities/asset-registration.entity';
 
 @Module({
   imports: [
@@ -24,7 +27,7 @@ import { AssetDepreciation } from './asset-depreciation/entities/asset-depreciat
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_DATABASE', 'manage_assets'),
-        entities: [AssetCategory, Department, AssetDepreciation],
+        entities: [AssetCategory, Department, AssetDepreciation, ProcurementRequest, AssetRegistration],
         synchronize: configService.get('NODE_ENV') !== 'production', // Only for development
       }),
       inject: [ConfigService],
@@ -32,6 +35,7 @@ import { AssetDepreciation } from './asset-depreciation/entities/asset-depreciat
     AssetCategoriesModule,
     DepartmentsModule,
     AssetDepreciationModule,
+    ProcurementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
