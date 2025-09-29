@@ -119,8 +119,8 @@ jobs:
     needs: [format, clippy, test, build, wasm-check]
     if: always()
     defaults:
-    run:
-      working-directory: .
+        run:
+            working-directory: .
     steps:
       - name: Check all jobs
         run: |
