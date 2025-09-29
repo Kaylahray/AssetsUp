@@ -1,10 +1,10 @@
 #![no_std]
-use soroban_sdk::{contract, contracttype, contractimpl, Address, Env};
+use soroban_sdk::{Address, Env, contract, contractimpl, contracttype};
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum DataKey {
-    Admin
+    Admin,
 }
 
 #[contract]
@@ -12,7 +12,7 @@ pub struct AssetUpContract;
 
 #[contractimpl]
 impl AssetUpContract {
-    pub fn initialize(env: Env, admin: Address){
+    pub fn initialize(env: Env, admin: Address) {
         admin.require_auth();
 
         if env.storage().persistent().has(&DataKey::Admin) {
