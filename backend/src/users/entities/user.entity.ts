@@ -19,9 +19,9 @@ export class User {
 
     @Column({ type: 'enum', enum: ['admin', 'user', 'manager'], default: 'user' })
     role: 'admin' | 'user' | 'manager';
-
-    @ManyToOne(() => Department, { nullable: true })
-    department?: Department;
+    // Department relation temporarily commented out due to import error
+    // @ManyToOne(() => Department, { nullable: true })
+    // department?: Department;
     @Column({ nullable: true })
     companyId?: number;
     @Column({ nullable: true })
