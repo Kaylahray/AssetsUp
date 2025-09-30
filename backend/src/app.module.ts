@@ -11,6 +11,9 @@ import { CompaniesModule } from './companies/companies.module';
 import { Company } from './companies/entities/company.entity';
 import { BranchesModule } from './branches/branches.module';
 import { Branch } from './branches/entities/branch.entity';
+import { AssetTransfersModule } from './asset-transfers/asset-transfers.module';
+import { AssetTransfer } from './asset-transfers/entities/asset-transfer.entity';
+import { InventoryItem as InventoryItemTop } from '../inventory-items/entities/inventory-item.entity';
 
 @Module({
   imports: [
@@ -42,7 +45,7 @@ import { Branch } from './branches/entities/branch.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_DATABASE', 'manage_assets'),
-        entities: [AssetCategory, Department, Company, Branch],
+        entities: [AssetCategory, Department, Company, Branch, AssetTransfer, InventoryItemTop],
         synchronize: configService.get('NODE_ENV') !== 'production', // Only for development
       }),
       inject: [ConfigService],
@@ -51,6 +54,7 @@ import { Branch } from './branches/entities/branch.entity';
     DepartmentsModule,
     CompaniesModule,
     BranchesModule,
+    AssetTransfersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
