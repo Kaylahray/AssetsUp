@@ -1,6 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ManyToOne } from 'typeorm';
-import { AssetSubcategory } from '../../asset-subcategories/entities/asset-subcategory.entity';
 
 @Entity()
 export class InventoryItem {
@@ -19,7 +17,4 @@ export class InventoryItem {
   // --- ADD THIS NEW FIELD ---
   @Column({ type: 'int', default: 10 }) // Default threshold of 10 units
   threshold: number;
-
-  @ManyToOne(() => AssetSubcategory, { nullable: true })
-  subcategory: AssetSubcategory;
 }
