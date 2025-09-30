@@ -20,13 +20,16 @@ export class AssetTransfersService {
       throw new NotFoundException(`Asset ${dto.assetId} not found`);
     }
 
+    // Capture original department before update
+    const previousDepartmentId = (asset as any).currentDepartmentId ?? null;
+
     // Update asset ownership (department)
     (asset as any).currentDepartmentId = dto.toDepartmentId;
     await this.inventoryRepository.save(asset);
 
     const transfer = this.transferRepository.create({
       assetId: dto.assetId,
-      fromDepartmentId: dto.fromDepartmentId ?? (asset as any).currentDepartmentId ?? null,
+      fromDepartmentId: dto.fromDepartmentId ?? previousDepartmentId,
       toDepartmentId: dto.toDepartmentId,
       transferDate: new Date(),
       initiatedBy: dto.initiatedBy,
