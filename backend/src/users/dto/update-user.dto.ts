@@ -17,9 +17,16 @@ export class UpdateUserDto {
   @MinLength(6)
   password?: string;
 
-  @IsOptional()
-  @IsString()
-  role?: string;
+    @IsOptional()
+    @IsString()
+    role?: 'admin' | 'user' | 'manager';
+
+    @IsOptional()
+    companyId?: number;
+    @IsOptional()
+    departmentId?: number;
+    @IsOptional()
+    branchId?: number;
 
   // companyId, departmentId, branchId can be added for mapping
 }

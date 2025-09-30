@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,8 +13,22 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query('page') page = 1, @Query('limit') limit = 10, @Query('role') role?: string) {
+    return this.usersService.findAll(Number(page), Number(limit), role);
+  }
+  @Patch(':id/department')
+  mapDepartment(@Param('id') id: string, @Body('department') department: any) {
+    return this.usersService.mapUserToDepartment(id, department);
+  }
+
+  @Patch(':id/company')
+  mapCompany(@Param('id') id: string, @Body('companyId') companyId: number) {
+    return this.usersService.mapUserToCompany(id, companyId);
+  }
+
+  @Patch(':id/branch')
+  mapBranch(@Param('id') id: string, @Body('branchId') branchId: number) {
+    return this.usersService.mapUserToBranch(id, branchId);
   }
 
   @Get(':id')

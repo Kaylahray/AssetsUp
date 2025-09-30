@@ -17,8 +17,20 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @Column()
-  role: string;
+    @Column({ type: 'enum', enum: ['admin', 'user', 'manager'], default: 'user' })
+    role: 'admin' | 'user' | 'manager';
+
+    @ManyToOne(() => Department, { nullable: true })
+    department?: Department;
+    @Column({ nullable: true })
+    companyId?: number;
+    @Column({ nullable: true })
+    branchId?: number;
+
+    @CreateDateColumn()
+    createdAt: Date;
+    @UpdateDateColumn()
+    updatedAt: Date;
 
   // Relations to company, department, branch (to be defined)
   // @ManyToOne(() => Company, company => company.users)
