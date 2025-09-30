@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { AssetSubcategory } from '../asset-subcategories/entities/asset-subcategory.entity';
 
 @Entity('asset_categories')
 export class AssetCategory {
@@ -17,8 +18,7 @@ export class AssetCategory {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relationship with assets (one-to-many)
-  // This will be uncommented when the Asset entity is created
-  // @OneToMany(() => Asset, asset => asset.category)
-  // assets: Asset[];
+    // Relationship with subcategories
+    @OneToMany(() => AssetSubcategory, subcategory => subcategory.parentCategory)
+    subcategories: AssetSubcategory[];
 }
