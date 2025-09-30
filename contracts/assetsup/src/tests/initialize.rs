@@ -28,7 +28,7 @@ fn test_initialize() {
 }
 
 #[test]
-#[should_panic()]
+#[should_panic]
 fn test_initialize_panic() {
     let (_env, client, admin) = setup_test_environment();
     client.initialize(&admin);
