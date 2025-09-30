@@ -9,6 +9,8 @@ import { DepartmentsModule } from './departments/departments.module';
 import { Department } from './departments/department.entity';
 import { CompaniesModule } from './companies/companies.module';
 import { Company } from './companies/entities/company.entity';
+import { BranchesModule } from './branches/branches.module';
+import { Branch } from './branches/entities/branch.entity';
 
 @Module({
   imports: [
@@ -40,7 +42,7 @@ import { Company } from './companies/entities/company.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_DATABASE', 'manage_assets'),
-        entities: [AssetCategory, Department, Company],
+        entities: [AssetCategory, Department, Company, Branch],
         synchronize: configService.get('NODE_ENV') !== 'production', // Only for development
       }),
       inject: [ConfigService],
@@ -48,6 +50,7 @@ import { Company } from './companies/entities/company.entity';
     AssetCategoriesModule,
     DepartmentsModule,
     CompaniesModule,
+    BranchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
