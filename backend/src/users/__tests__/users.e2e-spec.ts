@@ -95,4 +95,80 @@ describe('UsersController (e2e)', () => {
     const res = await request(app.getHttpServer()).delete(`/users/${userId}`);
     expect(res.status).toBe(200);
   });
+
+  it('should not create user with duplicate email', async () => {
+    await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        fullName: 'Dup User',
+        email: 'dup@example.com',
+        password: 'password123',
+        role: 'user',
+      });
+    const res = await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        fullName: 'Dup User2',
+        email: 'dup@example.com',
+        password: 'password123',
+        role: 'user',
+      });
+    expect(res.status).toBeGreaterThanOrEqual(400);
+  });
+
+  it('should filter users by role', async () => {
+    await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        fullName: 'Admin User',
+        email: 'admin@example.com',
+        password: 'password123',
+        role: 'admin',
+      });
+    const res = await request(app.getHttpServer())
+      .get('/users?role=admin');
+    expect(res.status).toBe(200);
+    expect(res.body.some((u: any) => u.role === 'admin')).toBe(true);
+  });
+
+  it('should paginate users', async () => {
+    for (let i = 0; i < 15; i++) {
+      await request(app.getHttpServer())
+        .post('/users')
+        .send({
+          fullName: `User${i}`,
+          email: `user${i}@example.com`,
+          password: 'password123',
+          role: 'user',
+        });
+    }
+    const res = await request(app.getHttpServer())
+      .get('/users?page=2&limit=10');
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBeLessThanOrEqual(10);
+  });
+
+  it('should not expose passwordHash in user response', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        fullName: 'Hidden Password',
+        email: 'hidden@example.com',
+        password: 'password123',
+        role: 'user',
+      });
+    expect(res.body.passwordHash).toBeUndefined();
+  });
+
+  it('should return 404 for non-existent user', async () => {
+    const res = await request(app.getHttpServer()).get('/users/non-existent-id');
+    expect(res.status).toBe(404);
+  });
+
+  it('should validate required fields on create', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/users')
+      .send({ email: 'invalid@example.com' });
+    expect(res.status).toBeGreaterThanOrEqual(400);
+  });
 });
