@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { InventoryItem } from '../inventory/entities/inventory-item.entity';
+import { InventoryItem } from '../entities/inventory-item.entity';
 import { InventoryAlertsService } from './inventory-alerts.service';
 import { InventoryAlertsController } from './inventory-alerts.controller';
 import { InventoryEventListener } from './listeners/inventory.listener';
