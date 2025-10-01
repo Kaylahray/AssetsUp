@@ -10,11 +10,7 @@ import { DepartmentsModule } from './departments/departments.module';
 import { Department } from './departments/department.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
-import { FileUploadsModule } from './file-uploads/file-uploads.module';
-import { FileUpload } from './file-uploads/entities/file-upload.entity';
-import { Asset } from './assets/entities/assest.entity';
-import { Supplier } from './suppliers/entities/supplier.entity';
-import { AssetTransfersModule } from './asset-transfers/asset-transfers.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -47,9 +43,9 @@ import { AssetTransfersModule } from './asset-transfers/asset-transfers.module';
     DepartmentsModule,
     AssetTransfersModule,
     UsersModule,
-    FileUploadsModule,
+    SearchModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, NotificationsController],
+  providers: [AppService, NotificationsService],
 })
 export class AppModule {}
