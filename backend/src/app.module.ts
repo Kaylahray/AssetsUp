@@ -37,7 +37,7 @@ import { SearchModule } from './search/search.module';
     UsersModule,
     SearchModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, NotificationsController],
+  providers: [AppService, NotificationsService],
 })
 export class AppModule {}
