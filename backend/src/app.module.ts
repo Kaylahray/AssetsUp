@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssetCategoriesModule } from './asset-categories/asset-categories.module';
@@ -9,6 +10,11 @@ import { DepartmentsModule } from './departments/departments.module';
 import { Department } from './departments/department.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { FileUploadsModule } from './file-uploads/file-uploads.module';
+import { FileUpload } from './file-uploads/entities/file-upload.entity';
+import { Asset } from './assets/entities/assest.entity';
+import { Supplier } from './suppliers/entities/supplier.entity';
+import { AssetTransfersModule } from './asset-transfers/asset-transfers.module';
 
 @Module({
   imports: [
@@ -24,7 +30,14 @@ import { User } from './users/entities/user.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_DATABASE', 'manage_assets'),
-        entities: [AssetCategory, Department, User],
+        entities: [
+          AssetCategory,
+          Department,
+          User,
+          FileUpload,
+          Asset,
+          Supplier,
+        ],
         synchronize: configService.get('NODE_ENV') !== 'production', // Only for development
       }),
       inject: [ConfigService],
@@ -34,6 +47,7 @@ import { User } from './users/entities/user.entity';
     DepartmentsModule,
     AssetTransfersModule,
     UsersModule,
+    FileUploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
