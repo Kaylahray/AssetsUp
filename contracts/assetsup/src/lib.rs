@@ -1,9 +1,9 @@
 #![no_std]
-use soroban_sdk::{Address, Env, contract, contractimpl, contracttype, BytesN};
+use soroban_sdk::{Address, BytesN, Env, contract, contractimpl, contracttype};
 
-pub(crate) mod types;
-pub(crate) mod errors;
 pub(crate) mod asset;
+pub(crate) mod errors;
+pub(crate) mod types;
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -34,7 +34,7 @@ impl AssetUpContract {
         // Access control
         asset.owner.require_auth();
 
-        if asset.name.len() == 0 {
+        if asset.name.is_empty() {
             panic!("Name cannot be empty");
         }
 
@@ -47,7 +47,10 @@ impl AssetUpContract {
         Ok(())
     }
 
-    pub fn get_asset(env: Env, asset_id: BytesN<32>) -> Result<asset::Asset, errors::ContractError> {
+    pub fn get_asset(
+        env: Env,
+        asset_id: BytesN<32>,
+    ) -> Result<asset::Asset, errors::ContractError> {
         let key = asset::DataKey::Asset(asset_id);
         let store = env.storage().persistent();
         match store.get::<_, asset::Asset>(&key) {

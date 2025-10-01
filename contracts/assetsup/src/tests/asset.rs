@@ -2,17 +2,20 @@
 
 extern crate std;
 
-use soroban_sdk::{testutils::Address as _, Address, BytesN, Env, String};
+use soroban_sdk::{Address, BytesN, Env, String, testutils::Address as _};
 
-use crate::{asset::Asset, types::{AssetStatus, AssetType}, errors::ContractError};
+use crate::{
+    asset::Asset,
+    types::{AssetStatus, AssetType},
+};
 
 use super::initialize::setup_test_environment;
 
 fn make_bytes32(env: &Env, seed: u32) -> BytesN<32> {
     let mut arr = [0u8; 32];
     // Simple deterministic fill
-    for i in 0..32 {
-        arr[i] = ((seed as usize + i) % 256) as u8;
+    for (i, item) in arr.iter_mut().enumerate() {
+        *item = ((seed as usize + i) % 256) as u8;
     }
     BytesN::from_array(env, &arr)
 }

@@ -1,5 +1,5 @@
 #![allow(clippy::upper_case_acronyms)]
-use soroban_sdk::{contracttype};
+use soroban_sdk::contracttype;
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
