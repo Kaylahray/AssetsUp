@@ -32,6 +32,7 @@ import { User } from './users/entities/user.entity';
     }),
     AssetCategoriesModule,
     DepartmentsModule,
+    AssetTransfersModule,
     UsersModule,
   ],
   controllers: [AppController],
