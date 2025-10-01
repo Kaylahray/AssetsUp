@@ -14,6 +14,9 @@ export class InventoryItem {
   @Column({ type: 'int', default: 10 })
   reorderLevel: number; // This is the threshold for reordering
 
+  @Column({ type: 'int', nullable: true })
+  currentDepartmentId: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
