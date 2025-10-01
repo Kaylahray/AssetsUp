@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -16,7 +15,6 @@ import { User } from './users/entities/user.entity';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -31,6 +29,7 @@ import { User } from './users/entities/user.entity';
       }),
       inject: [ConfigService],
     }),
+
     AssetCategoriesModule,
     DepartmentsModule,
     AssetTransfersModule,
