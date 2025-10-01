@@ -9,6 +9,7 @@ import { DepartmentsModule } from './departments/departments.module';
 import { Department } from './departments/department.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { User } from './users/entities/user.entity';
     DepartmentsModule,
     AssetTransfersModule,
     UsersModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
