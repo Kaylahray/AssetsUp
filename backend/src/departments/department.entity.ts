@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Company } from '../companies/entities/company.entity';
 
 @Entity('departments')
 export class Department {
@@ -20,9 +21,9 @@ export class Department {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relationships (commented out until related entities are created)
-  // @ManyToOne(() => Company, company => company.departments)
-  // company: Company;
+  // Relationships
+  @ManyToOne(() => Company)
+  company: Company;
 
   // @OneToMany(() => User, user => user.department)
   // users: User[];

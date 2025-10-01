@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-  "./hello-world", "assetsup_contract",
+    "assetsup"
 ]
 
 [workspace.dependencies]
