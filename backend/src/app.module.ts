@@ -9,11 +9,7 @@ import { DepartmentsModule } from './departments/departments.module';
 import { Department } from './departments/department.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
-import { NotificationsService } from './notifications/notifications.service';
-import { NotificationsController } from './notifications/notifications.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AssetTransfersModule } from './asset-transfers/asset-transfers.module';
-import { NotificationsModule } from './notifications/notifications.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -39,7 +35,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     DepartmentsModule,
     AssetTransfersModule,
     UsersModule,
-    NotificationsModule,
+    SearchModule,
   ],
   controllers: [AppController, NotificationsController],
   providers: [AppService, NotificationsService],
