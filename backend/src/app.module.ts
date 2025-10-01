@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssetCategoriesModule } from './asset-categories/asset-categories.module';
@@ -25,7 +26,14 @@ import { SearchModule } from './search/search.module';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_DATABASE', 'manage_assets'),
-        entities: [AssetCategory, Department, User],
+        entities: [
+          AssetCategory,
+          Department,
+          User,
+          FileUpload,
+          Asset,
+          Supplier,
+        ],
         synchronize: configService.get('NODE_ENV') !== 'production', // Only for development
       }),
       inject: [ConfigService],
