@@ -14,12 +14,12 @@ export class AuthService {
 		private readonly jwtService: JwtService,
 	) {}
 
-	async validateUser(email: string, password: string): Promise<User | null> {
-		const user = await this.usersService.userRepository.findOneBy({ email });
-		if (!user) return null;
-		const isMatch = await bcrypt.compare(password, user.passwordHash);
-		return isMatch ? user : null;
-	}
+		async validateUser(email: string, password: string): Promise<User | null> {
+			const user = await this.usersService.findByEmail(email);
+			if (!user) return null;
+			const isMatch = await bcrypt.compare(password, user.passwordHash);
+			return isMatch ? user : null;
+		}
 
 	async login(user: User) {
 		const payload = { sub: user.id, email: user.email, role: user.role };

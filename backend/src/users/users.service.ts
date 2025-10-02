@@ -24,6 +24,10 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ email });
+  }
+
   async findAll(page = 1, limit = 10, role?: string): Promise<{ data: User[]; total: number }> {
     const [data, total] = await this.userRepository.findAndCount({
       where: role ? { role: role as 'admin' | 'user' | 'manager' } : {},
