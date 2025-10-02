@@ -12,6 +12,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { SearchModule } from './search/search.module';
 import { AuthModule } from './auth/auth.module';
+import { ReportingModule } from './reporting/reporting.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     SearchModule,
     AuthModule,
+    ReportingModule,
   ],
   controllers: [AppController, NotificationsController],
   providers: [AppService, NotificationsService],
