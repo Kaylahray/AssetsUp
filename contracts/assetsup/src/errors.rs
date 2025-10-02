@@ -5,4 +5,7 @@ use soroban_sdk::contracterror;
 pub enum ContractError {
     AssetAlreadyExists = 1,
     AssetNotFound = 2,
+    BranchAlreadyExists = 3,
+    BranchNotFound = 4,
+    Unauthorized = 5,
 }
