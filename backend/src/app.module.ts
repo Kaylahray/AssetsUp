@@ -12,6 +12,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { SearchModule } from './search/search.module';
 import { AuthModule } from './auth/auth.module';
+import { RiskModule } from './risk/risk.module';
 import { ReportingModule } from './reporting/reporting.module';
 
 @Module({
@@ -47,6 +48,7 @@ import { ReportingModule } from './reporting/reporting.module';
     UsersModule,
     SearchModule,
     AuthModule,
+    RiskModule,
     ReportingModule,
   ],
   controllers: [AppController, NotificationsController],
