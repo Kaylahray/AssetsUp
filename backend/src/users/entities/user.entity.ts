@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
 } from 'typeorm';
+import { Role } from '../../auth/roles.enum';
 
 @Entity('users')
 export class User {
@@ -24,8 +25,9 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @Column({ type: 'enum', enum: ['admin', 'user', 'manager'], default: 'user' })
-  role: 'admin' | 'user' | 'manager';
+  @Column({ type: 'enum', enum: Role, default: Role.Employee })
+  role: Role;
+
   // Department relation temporarily commented out due to import error
   // @ManyToOne(() => Department, { nullable: true })
   // department?: Department;
