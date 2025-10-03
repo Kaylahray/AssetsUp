@@ -1,10 +1,11 @@
 #![no_std]
+
 use crate::error::{Error, handle_error};
 use soroban_sdk::{Address, BytesN, Env, contract, contractimpl, contracttype};
 
 pub(crate) mod asset;
-pub(crate) mod errors;
 pub(crate) mod types;
+pub(crate) mod error;
 
 pub use types::*;
 
@@ -41,7 +42,7 @@ impl AssetUpContract {
     }
 
     // Asset functions
-    pub fn register_asset(env: Env, asset: asset::Asset) -> Result<(), errors::ContractError> {
+    pub fn register_asset(env: Env, asset: asset::Asset) -> Result<(), Error> {
         // Access control
         asset.owner.require_auth();
 
@@ -52,7 +53,7 @@ impl AssetUpContract {
         let key = asset::DataKey::Asset(asset.id.clone());
         let store = env.storage().persistent();
         if store.has(&key) {
-            return Err(errors::ContractError::AssetAlreadyExists);
+            return Err(Error::AssetAlreadyExists);
         }
         store.set(&key, &asset);
         Ok(())
@@ -61,12 +62,12 @@ impl AssetUpContract {
     pub fn get_asset(
         env: Env,
         asset_id: BytesN<32>,
-    ) -> Result<asset::Asset, errors::ContractError> {
+    ) -> Result<asset::Asset, Error> {
         let key = asset::DataKey::Asset(asset_id);
         let store = env.storage().persistent();
         match store.get::<_, asset::Asset>(&key) {
             Some(a) => Ok(a),
-            None => Err(errors::ContractError::AssetNotFound),
+            None => Err(Error::AssetNotFound),
         }
     }
 }
