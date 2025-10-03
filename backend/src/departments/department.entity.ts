@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Company } from '../companies/entities/company.entity';
+import { Branch } from '../branches/entities/branch.entity';
 
 @Entity('departments')
 export class Department {
@@ -15,6 +16,9 @@ export class Department {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ type: 'int', nullable: true })
+  branchId: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -24,6 +28,9 @@ export class Department {
   // Relationships
   @ManyToOne(() => Company)
   company: Company;
+
+  @ManyToOne(() => Branch, { onDelete: 'SET NULL' })
+  branch: Branch;
 
   // @OneToMany(() => User, user => user.department)
   // users: User[];

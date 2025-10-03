@@ -12,6 +12,7 @@ import { Supplier } from '../../suppliers/entities/supplier.entity';
 import { Department } from '../../departments/department.entity';
 // import { Category } from '../../categories/entities/category.entity';
 import { FileUpload } from '../../file-uploads/entities/file-upload.entity';
+import { Branch } from '../../branches/entities/branch.entity';
 
 @Entity('assets')
 export class Asset {
@@ -39,6 +40,9 @@ export class Asset {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ type: 'int', nullable: true })
+  assignedBranchId: number;
+
   // Relationships
   @ManyToOne(() => Supplier, (supplier) => supplier.files, { nullable: true })
   @JoinColumn({ name: 'supplier_id' })
@@ -47,6 +51,10 @@ export class Asset {
   @ManyToOne(() => Department, { nullable: true })
   @JoinColumn({ name: 'assigned_department_id' })
   assignedDepartment?: Department;
+
+  @ManyToOne(() => Branch, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'assigned_branch_id' })
+  assignedBranch?: Branch;
 
   // This should be uncommented when the category entity is created
   //   @ManyToOne(() => Category, { nullable: false })

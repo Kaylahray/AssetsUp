@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Company } from '../../companies/entities/company.entity';
+import { Department } from '../../departments/department.entity';
+import { Asset } from '../../assets/entities/assest.entity';
 
 @Entity('branches')
 export class Branch {
@@ -15,8 +17,14 @@ export class Branch {
   @Column({ type: 'int' })
   companyId: number;
 
-  @ManyToOne(() => Company)
+  @ManyToOne(() => Company, { onDelete: 'CASCADE' })
   company: Company;
+
+  @OneToMany(() => Department, (department) => department.branch)
+  departments: Department[];
+
+  @OneToMany(() => Asset, (asset) => asset.assignedBranch)
+  assets: Asset[];
 
   @CreateDateColumn()
   createdAt: Date;
@@ -24,5 +32,3 @@ export class Branch {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-
-
