@@ -1,9 +1,11 @@
 import { Controller, Get, Query, Res, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { ReportsService } from './services/reports.service';
 import { ReportGeneratorService } from './services/report-generator.service';
 import { GenerateReportDto } from './dto/generate-report.dto';
 
+@ApiTags('Reports')
 @Controller('reports')
 export class ReportsController {
   constructor(
@@ -12,6 +14,9 @@ export class ReportsController {
   ) {}
 
   @Get('assets/csv')
+  @ApiOperation({ summary: 'Generate asset report as CSV' })
+  @ApiResponse({ status: 200, description: 'CSV report generated successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid query parameters' })
   async getAssetReportCsv(
     @Query(new ValidationPipe({ transform: true })) filters: GenerateReportDto,
     @Res() res: Response,
@@ -25,6 +30,9 @@ export class ReportsController {
   }
 
   @Get('assets/pdf')
+  @ApiOperation({ summary: 'Generate asset report as PDF' })
+  @ApiResponse({ status: 200, description: 'PDF report generated successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid query parameters' })
   async getAssetReportPdf(
     @Query(new ValidationPipe({ transform: true })) filters: GenerateReportDto,
     @Res() res: Response,

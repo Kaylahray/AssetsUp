@@ -1,4 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { FileUpload } from '../../file-uploads/entities/file-upload.entity';
+import { Asset } from 'src/assets/entities/assest.entity';
 
 @Entity('suppliers')
 export class Supplier {
@@ -21,6 +23,9 @@ export class Supplier {
   phone: string;
 
   // This should be uncommented when the Asset entity is created
-  //   @OneToMany(() => Asset, (asset) => asset.supplier)
-  //   assets: Asset[];
+  @OneToMany(() => Asset, (asset) => asset.supplier)
+  assets: Asset[];
+
+  @OneToMany(() => FileUpload, (fileUpload) => fileUpload.supplier)
+  files: FileUpload[];
 }

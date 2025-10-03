@@ -13,6 +13,7 @@ import {
   ValidationPipe,
   BadRequestException,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { ProcurementService } from './procurement.service';
 import {
   CreateProcurementRequestDto,
@@ -26,16 +27,17 @@ import {
 import { ProcurementStatus } from './entities/procurement-request.entity';
 import { AssetStatus } from './entities/asset-registration.entity';
 
+@ApiTags('Procurement')
 @Controller('procurement')
 export class ProcurementController {
   constructor(private readonly procurementService: ProcurementService) {}
 
-  /**
-   * Create a new procurement request
-   * POST /procurement
-   */
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new procurement request' })
+  @ApiResponse({ status: 201, description: 'Procurement request created successfully', type: ProcurementRequestResponseDto })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiBody({ type: CreateProcurementRequestDto })
   async create(
     @Body(ValidationPipe) createDto: CreateProcurementRequestDto,
   ): Promise<ProcurementRequestResponseDto> {
@@ -43,11 +45,12 @@ export class ProcurementController {
     return new ProcurementRequestResponseDto(procurementRequest);
   }
 
-  /**
-   * Get all procurement requests with optional filtering
-   * GET /procurement?status=pending&requestedBy=john&itemName=laptop
-   */
   @Get()
+  @ApiOperation({ summary: 'Get all procurement requests with optional filtering' })
+  @ApiQuery({ name: 'status', required: false, enum: ProcurementStatus })
+  @ApiQuery({ name: 'requestedBy', required: false, type: String })
+  @ApiQuery({ name: 'itemName', required: false, type: String })
+  @ApiResponse({ status: 200, description: 'Procurement requests retrieved successfully', type: [ProcurementRequestResponseDto] })
   async findAll(
     @Query('status') status?: string,
     @Query('requestedBy') requestedBy?: string,
@@ -75,20 +78,17 @@ export class ProcurementController {
     return procurementRequests.map(pr => new ProcurementRequestResponseDto(pr));
   }
 
-  /**
-   * Get procurement summary statistics
-   * GET /procurement/summary
-   */
   @Get('summary')
+  @ApiOperation({ summary: 'Get procurement summary statistics' })
+  @ApiResponse({ status: 200, description: 'Summary retrieved successfully', type: ProcurementSummaryDto })
   getSummary(): Promise<ProcurementSummaryDto> {
     return this.procurementService.getSummary();
   }
 
-  /**
-   * Get pending requests by user
-   * GET /procurement/pending/:requestedBy
-   */
   @Get('pending/:requestedBy')
+  @ApiOperation({ summary: 'Get pending requests by user' })
+  @ApiParam({ name: 'requestedBy', description: 'User who made the requests' })
+  @ApiResponse({ status: 200, description: 'Pending requests retrieved successfully', type: [ProcurementRequestResponseDto] })
   async getPendingByUser(
     @Param('requestedBy') requestedBy: string,
   ): Promise<ProcurementRequestResponseDto[]> {
@@ -96,11 +96,10 @@ export class ProcurementController {
     return requests.map(pr => new ProcurementRequestResponseDto(pr));
   }
 
-  /**
-   * Get assets assigned to a user
-   * GET /procurement/assets/assigned/:assignedTo
-   */
   @Get('assets/assigned/:assignedTo')
+  @ApiOperation({ summary: 'Get assets assigned to a user' })
+  @ApiParam({ name: 'assignedTo', description: 'User assigned to assets' })
+  @ApiResponse({ status: 200, description: 'Assigned assets retrieved successfully', type: [AssetRegistrationResponseDto] })
   async getAssetsByAssignee(
     @Param('assignedTo') assignedTo: string,
   ): Promise<AssetRegistrationResponseDto[]> {
@@ -108,11 +107,12 @@ export class ProcurementController {
     return assets.map(asset => new AssetRegistrationResponseDto(asset));
   }
 
-  /**
-   * Get all assets with filtering
-   * GET /procurement/assets?status=active&assignedTo=john&location=office
-   */
   @Get('assets')
+  @ApiOperation({ summary: 'Get all assets with filtering' })
+  @ApiQuery({ name: 'status', required: false, enum: AssetStatus })
+  @ApiQuery({ name: 'assignedTo', required: false, type: String })
+  @ApiQuery({ name: 'location', required: false, type: String })
+  @ApiResponse({ status: 200, description: 'Assets retrieved successfully', type: [AssetRegistrationResponseDto] })
   async getAllAssets(
     @Query('status') status?: string,
     @Query('assignedTo') assignedTo?: string,
@@ -140,11 +140,11 @@ export class ProcurementController {
     return assets.map(asset => new AssetRegistrationResponseDto(asset));
   }
 
-  /**
-   * Get asset by asset ID
-   * GET /procurement/assets/:assetId
-   */
   @Get('assets/:assetId')
+  @ApiOperation({ summary: 'Get asset by asset ID' })
+  @ApiParam({ name: 'assetId', description: 'Asset identifier' })
+  @ApiResponse({ status: 200, description: 'Asset retrieved successfully', type: AssetRegistrationResponseDto })
+  @ApiResponse({ status: 404, description: 'Asset not found' })
   async getAssetByAssetId(
     @Param('assetId') assetId: string,
   ): Promise<AssetRegistrationResponseDto> {
@@ -152,11 +152,22 @@ export class ProcurementController {
     return new AssetRegistrationResponseDto(asset);
   }
 
-  /**
-   * Update asset status
-   * PATCH /procurement/assets/:assetId/status
-   */
   @Patch('assets/:assetId/status')
+  @ApiOperation({ summary: 'Update asset status' })
+  @ApiParam({ name: 'assetId', description: 'Asset identifier' })
+  @ApiResponse({ status: 200, description: 'Asset status updated successfully', type: AssetRegistrationResponseDto })
+  @ApiResponse({ status: 400, description: 'Invalid status' })
+  @ApiResponse({ status: 404, description: 'Asset not found' })
+  @ApiBody({ 
+    schema: { 
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: Object.values(AssetStatus) },
+        updatedBy: { type: 'string', example: 'admin@company.com' }
+      },
+      required: ['status']
+    } 
+  })
   async updateAssetStatus(
     @Param('assetId') assetId: string,
     @Body('status') status: AssetStatus,
@@ -170,21 +181,21 @@ export class ProcurementController {
     return new AssetRegistrationResponseDto(asset);
   }
 
-  /**
-   * Get specific procurement request by ID
-   * GET /procurement/:id
-   */
   @Get(':id')
+  @ApiOperation({ summary: 'Get specific procurement request by ID' })
+  @ApiParam({ name: 'id', description: 'Procurement request ID', type: Number })
+  @ApiResponse({ status: 200, description: 'Procurement request retrieved successfully', type: ProcurementRequestResponseDto })
+  @ApiResponse({ status: 404, description: 'Procurement request not found' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<ProcurementRequestResponseDto> {
     const procurementRequest = await this.procurementService.findOne(id);
     return new ProcurementRequestResponseDto(procurementRequest);
   }
 
-  /**
-   * Get asset registration for a procurement request
-   * GET /procurement/:id/asset
-   */
   @Get(':id/asset')
+  @ApiOperation({ summary: 'Get asset registration for a procurement request' })
+  @ApiParam({ name: 'id', description: 'Procurement request ID', type: Number })
+  @ApiResponse({ status: 200, description: 'Asset registration retrieved successfully', type: AssetRegistrationResponseDto })
+  @ApiResponse({ status: 404, description: 'Procurement request or asset not found' })
   async getAssetRegistration(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<AssetRegistrationResponseDto> {
@@ -192,12 +203,24 @@ export class ProcurementController {
     return new AssetRegistrationResponseDto(asset);
   }
 
-  /**
-   * Approve a procurement request and create asset registration
-   * POST /procurement/:id/approve
-   */
   @Post(':id/approve')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Approve a procurement request and create asset registration' })
+  @ApiParam({ name: 'id', description: 'Procurement request ID', type: Number })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Procurement request approved and asset created successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        procurementRequest: { $ref: '#/components/schemas/ProcurementRequestResponseDto' },
+        assetRegistration: { $ref: '#/components/schemas/AssetRegistrationResponseDto' }
+      }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Invalid approval data' })
+  @ApiResponse({ status: 404, description: 'Procurement request not found' })
+  @ApiBody({ type: ApproveProcurementRequestDto })
   async approve(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) approveDto: ApproveProcurementRequestDto,
@@ -213,12 +236,14 @@ export class ProcurementController {
     };
   }
 
-  /**
-   * Reject a procurement request
-   * POST /procurement/:id/reject
-   */
   @Post(':id/reject')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reject a procurement request' })
+  @ApiParam({ name: 'id', description: 'Procurement request ID', type: Number })
+  @ApiResponse({ status: 200, description: 'Procurement request rejected successfully', type: ProcurementRequestResponseDto })
+  @ApiResponse({ status: 400, description: 'Invalid rejection data' })
+  @ApiResponse({ status: 404, description: 'Procurement request not found' })
+  @ApiBody({ type: RejectProcurementRequestDto })
   async reject(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) rejectDto: RejectProcurementRequestDto,
@@ -227,11 +252,13 @@ export class ProcurementController {
     return new ProcurementRequestResponseDto(procurementRequest);
   }
 
-  /**
-   * Update a procurement request (only if pending)
-   * PATCH /procurement/:id
-   */
   @Patch(':id')
+  @ApiOperation({ summary: 'Update a procurement request (only if pending)' })
+  @ApiParam({ name: 'id', description: 'Procurement request ID', type: Number })
+  @ApiResponse({ status: 200, description: 'Procurement request updated successfully', type: ProcurementRequestResponseDto })
+  @ApiResponse({ status: 400, description: 'Invalid update data' })
+  @ApiResponse({ status: 404, description: 'Procurement request not found' })
+  @ApiBody({ type: UpdateProcurementRequestDto })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateDto: UpdateProcurementRequestDto,
@@ -240,12 +267,13 @@ export class ProcurementController {
     return new ProcurementRequestResponseDto(procurementRequest);
   }
 
-  /**
-   * Delete a procurement request (only if pending)
-   * DELETE /procurement/:id
-   */
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete a procurement request (only if pending)' })
+  @ApiParam({ name: 'id', description: 'Procurement request ID', type: Number })
+  @ApiResponse({ status: 204, description: 'Procurement request deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Cannot delete non-pending request' })
+  @ApiResponse({ status: 404, description: 'Procurement request not found' })
   remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.procurementService.remove(id);
   }
