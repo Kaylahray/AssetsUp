@@ -1,27 +1,30 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm';
 
-@Entity("notifications")
+@Entity('notifications')
 export class Notification {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  senderId: string;
+  userId: string;
 
-  @Column()
-  receiverId: string;
-
-  @Column("text")
+  @Column('text')
   message: string;
 
   @Column({ default: false })
-  read: boolean;
+  isRead: boolean;
+
+  @Column({ nullable: true })
+  type: string; // 'asset_transfer', 'low_stock', 'maintenance_due'
+
+  @Column('json', { nullable: true })
+  metadata: Record<string, any>; // Additional data for the notification
 
   @CreateDateColumn()
   createdAt: Date;

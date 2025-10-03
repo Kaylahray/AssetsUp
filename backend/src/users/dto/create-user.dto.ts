@@ -1,44 +1,46 @@
-import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from "class-validator"
-import { ApiProperty } from "@nestjs/swagger"
-
-export enum UserRole {
-  ADMIN = "admin",
-  ASSET_MANAGER = "asset_manager",
-  DEPARTMENT_HEAD = "department_head",
-  EMPLOYEE = "employee",
-}
+import { IsEmail, IsNotEmpty, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
-  @ApiProperty({ example: "John Doe" })
+  @ApiProperty({ description: 'Full name of the user', example: 'John Doe' })
+  @IsNotEmpty()
   @IsString()
-  name: string
+  fullName: string;
 
-  @ApiProperty({ example: "john@example.com" })
+  @ApiProperty({ description: 'Email address', example: 'john.doe@example.com' })
   @IsEmail()
-  email: string
+  email: string;
 
-  @ApiProperty({ example: "password123", minLength: 6 })
+  @ApiPropertyOptional({ description: 'Phone number', example: '+1234567890' })
+  @IsOptional()
   @IsString()
+  phoneNumber?: string;
+
+  @ApiProperty({ description: 'Password (min 6 characters)', example: 'password123' })
+  @IsNotEmpty()
   @MinLength(6)
-  password: string
+  password: string;
 
-  @ApiProperty({ enum: UserRole, default: UserRole.EMPLOYEE })
-  @IsEnum(UserRole)
-  @IsOptional()
-  role?: UserRole
-
-  @ApiProperty({ example: "IT", required: false })
+  @ApiPropertyOptional({ 
+    description: 'User role', 
+    enum: ['admin', 'user', 'manager'],
+    example: 'user'
+  })
+  @IsNotEmpty()
   @IsString()
   @IsOptional()
-  department?: string
+  @IsEnum(['admin', 'user', 'manager'])
+  role: 'admin' | 'user' | 'manager';
 
-  @ApiProperty({ example: "Software Engineer", required: false })
-  @IsString()
+  @ApiPropertyOptional({ description: 'Company ID', example: 1 })
   @IsOptional()
-  position?: string
+  companyId?: number;
 
-  @ApiProperty({ example: "branch-id", required: false })
-  @IsString()
+  @ApiPropertyOptional({ description: 'Department ID', example: 5 })
   @IsOptional()
-  branchId?: string
+  departmentId?: number;
+
+  @ApiPropertyOptional({ description: 'Branch ID', example: 3 })
+  @IsOptional()
+  branchId?: number;
 }

@@ -1,79 +1,49 @@
 import {
-  Column,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
   UpdateDateColumn,
-} from "typeorm"
-import { Asset } from "../../assets/entities/asset.entity"
-import { Branch } from "../../branches/entities/branch.entity"
+  CreateDateColumn,
+} from 'typeorm';
 
-export enum UserRole {
-  ADMIN = "admin",
-  ASSET_MANAGER = "asset_manager",
-  DEPARTMENT_HEAD = "department_head",
-  EMPLOYEE = "employee",
-}
-
-@Entity("users")
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn("uuid")
-  id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  name: string
+  fullName: string;
 
   @Column({ unique: true })
-  email: string
+  email: string;
+
+  @Column({ nullable: true })
+  phoneNumber: string;
 
   @Column()
-  password: string
+  passwordHash: string;
 
-  @Column({
-    type: "enum",
-    enum: UserRole,
-    default: UserRole.EMPLOYEE,
-  })
-  role: UserRole
-
+  @Column({ type: 'enum', enum: ['admin', 'user', 'manager'], default: 'user' })
+  role: 'admin' | 'user' | 'manager';
+  // Department relation temporarily commented out due to import error
+  // @ManyToOne(() => Department, { nullable: true })
+  // department?: Department;
   @Column({ nullable: true })
-  department: string
-
+  companyId?: number;
   @Column({ nullable: true })
-  position: string
-
-  @Column({ nullable: true })
-  phone: string
-
-  @Column({ nullable: true })
-  avatar: string
-
-  @Column({ default: true })
-  isActive: boolean
-
-  @ManyToOne(
-    () => Branch,
-    (branch) => branch.users,
-    { nullable: true },
-  )
-  @JoinColumn({ name: "branchId" })
-  branch: Branch
-
-  @Column({ nullable: true })
-  branchId: string
-
-  @OneToMany(
-    () => Asset,
-    (asset) => asset.assignedTo,
-  )
-  assignedAssets: Asset[]
+  branchId?: number;
 
   @CreateDateColumn()
-  createdAt: Date
-
+  createdAt: Date;
   @UpdateDateColumn()
-  updatedAt: Date
+  updatedAt: Date;
+
+  // Relations to company, department, branch (to be defined)
+  // @ManyToOne(() => Company, company => company.users)
+  // company: Company;
+  // @ManyToOne(() => Department, department => department.users)
+  // department: Department;
+  // @ManyToOne(() => Branch, branch => branch.users)
+  // branch: Branch;
 }
