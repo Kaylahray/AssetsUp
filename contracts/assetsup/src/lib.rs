@@ -4,8 +4,8 @@ use crate::error::{Error, handle_error};
 use soroban_sdk::{Address, BytesN, Env, contract, contractimpl, contracttype};
 
 pub(crate) mod asset;
-pub(crate) mod types;
 pub(crate) mod error;
+pub(crate) mod types;
 
 pub use types::*;
 
@@ -20,14 +20,14 @@ pub struct AssetUpContract;
 
 #[contractimpl]
 impl AssetUpContract {
-    pub fn initialize(env: Env, admin: Address) -> Result<(), Error>{
+    pub fn initialize(env: Env, admin: Address) -> Result<(), Error> {
         admin.require_auth();
 
         if env.storage().persistent().has(&DataKey::Admin) {
             handle_error(&env, Error::AlreadyInitialized)
-
         }
-        Ok(env.storage().persistent().set(&DataKey::Admin, &admin))
+        env.storage().persistent().set(&DataKey::Admin, &admin);
+        Ok(())
     }
 
     pub fn get_admin(env: Env) -> Result<Address, Error> {
@@ -38,7 +38,6 @@ impl AssetUpContract {
 
         let admin = env.storage().persistent().get(&key).unwrap();
         Ok(admin)
-
     }
 
     // Asset functions
@@ -59,10 +58,7 @@ impl AssetUpContract {
         Ok(())
     }
 
-    pub fn get_asset(
-        env: Env,
-        asset_id: BytesN<32>,
-    ) -> Result<asset::Asset, Error> {
+    pub fn get_asset(env: Env, asset_id: BytesN<32>) -> Result<asset::Asset, Error> {
         let key = asset::DataKey::Asset(asset_id);
         let store = env.storage().persistent();
         match store.get::<_, asset::Asset>(&key) {

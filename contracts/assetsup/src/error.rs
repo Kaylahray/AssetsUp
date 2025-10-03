@@ -1,4 +1,4 @@
-use soroban_sdk::{contracterror, panic_with_error, Env};
+use soroban_sdk::{Env, contracterror, panic_with_error};
 
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -19,13 +19,14 @@ pub enum Error {
     // User not authorized
     Unauthorized = 8,
     // Payment is not valid
-    InvalidPayment = 9
+    InvalidPayment = 9,
 }
 
 pub fn handle_error(env: &Env, error: Error) -> ! {
     panic_with_error!(env, error);
 }
 
+#[allow(dead_code)]
 pub fn dummy_function(_env: Env, asset_exists: bool) -> Result<(), Error> {
     if asset_exists {
         Err(Error::AssetAlreadyExists)
@@ -37,7 +38,7 @@ pub fn dummy_function(_env: Env, asset_exists: bool) -> Result<(), Error> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use soroban_sdk::{Env};
+    use soroban_sdk::Env;
 
     #[test]
     fn test_dummy_function_asset_exists() {

@@ -29,7 +29,6 @@ fn test_initialize() {
 
 #[test]
 #[should_panic(expected = "Error(Contract, #1)")]
-#[should_panic]
 fn test_initialize_panic() {
     let (_env, client, admin) = setup_test_environment();
     client.initialize(&admin);
