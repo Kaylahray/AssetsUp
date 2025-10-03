@@ -2,10 +2,10 @@
 
 extern crate std;
 
+use super::initialize::setup_test_environment;
 use crate::asset::Asset;
 use crate::types::{AssetStatus, AssetType};
 use soroban_sdk::{Address, BytesN, String, testutils::Address as _};
-use super::initialize::setup_test_environment;
 
 #[test]
 fn test_create_branch() {
@@ -82,7 +82,7 @@ fn test_add_asset_to_branch() {
     let asset = Asset {
         id: asset_id.clone(),
         name: String::from_str(&env, "Test Asset"),
-        asset_type: AssetType::IT,
+        asset_type: AssetType::Physical,
         category: String::from_str(&env, "Computer"),
         branch_id: 1,
         department_id: 1,
@@ -154,7 +154,7 @@ fn test_add_duplicate_asset_to_branch() {
     let asset = Asset {
         id: asset_id.clone(),
         name: String::from_str(&env, "Test Asset"),
-        asset_type: AssetType::IT,
+        asset_type: AssetType::Physical,
         category: String::from_str(&env, "Computer"),
         branch_id: 1,
         department_id: 1,
@@ -200,7 +200,7 @@ fn test_get_branch_assets_multiple() {
     let asset1 = Asset {
         id: asset1_id.clone(),
         name: String::from_str(&env, "Asset 1"),
-        asset_type: AssetType::IT,
+        asset_type: AssetType::Physical,
         category: String::from_str(&env, "Computer"),
         branch_id: 1,
         department_id: 1,
@@ -216,7 +216,7 @@ fn test_get_branch_assets_multiple() {
     let asset2 = Asset {
         id: asset2_id.clone(),
         name: String::from_str(&env, "Asset 2"),
-        asset_type: AssetType::Furniture,
+        asset_type: AssetType::Physical,
         category: String::from_str(&env, "Desk"),
         branch_id: 1,
         department_id: 1,
@@ -232,7 +232,7 @@ fn test_get_branch_assets_multiple() {
     let asset3 = Asset {
         id: asset3_id.clone(),
         name: String::from_str(&env, "Asset 3"),
-        asset_type: AssetType::Vehicle,
+        asset_type: AssetType::Physical,
         category: String::from_str(&env, "Car"),
         branch_id: 1,
         department_id: 1,
@@ -262,7 +262,7 @@ fn test_get_branch_assets_multiple() {
     let mut found_asset1 = false;
     let mut found_asset2 = false;
     let mut found_asset3 = false;
-    
+
     for i in 0..assets.len() {
         let asset_id = assets.get(i).unwrap();
         if asset_id == asset1_id {

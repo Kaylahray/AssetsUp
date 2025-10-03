@@ -1,10 +1,15 @@
 #![no_std]
+
+use crate::error::{Error, handle_error};
 use soroban_sdk::{Address, BytesN, Env, String, Vec, contract, contractimpl, contracttype};
 
 pub(crate) mod asset;
 pub(crate) mod branch;
+pub(crate) mod error;
 pub(crate) mod errors;
 pub(crate) mod types;
+
+pub use types::*;
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -17,21 +22,28 @@ pub struct AssetUpContract;
 
 #[contractimpl]
 impl AssetUpContract {
-    pub fn initialize(env: Env, admin: Address) {
+    pub fn initialize(env: Env, admin: Address) -> Result<(), Error> {
         admin.require_auth();
 
         if env.storage().persistent().has(&DataKey::Admin) {
-            panic!("Contract is already initialized");
+            handle_error(&env, Error::AlreadyInitialized)
         }
         env.storage().persistent().set(&DataKey::Admin, &admin);
+        Ok(())
     }
 
-    pub fn get_admin(env: Env) -> Address {
-        env.storage().persistent().get(&DataKey::Admin).unwrap()
+    pub fn get_admin(env: Env) -> Result<Address, Error> {
+        let key = DataKey::Admin;
+        if !env.storage().persistent().has(&key) {
+            handle_error(&env, Error::AdminNotFound)
+        }
+
+        let admin = env.storage().persistent().get(&key).unwrap();
+        Ok(admin)
     }
 
     // Asset functions
-    pub fn register_asset(env: Env, asset: asset::Asset) -> Result<(), errors::ContractError> {
+    pub fn register_asset(env: Env, asset: asset::Asset) -> Result<(), Error> {
         // Access control
         asset.owner.require_auth();
 
@@ -42,21 +54,18 @@ impl AssetUpContract {
         let key = asset::DataKey::Asset(asset.id.clone());
         let store = env.storage().persistent();
         if store.has(&key) {
-            return Err(errors::ContractError::AssetAlreadyExists);
+            return Err(Error::AssetAlreadyExists);
         }
         store.set(&key, &asset);
         Ok(())
     }
 
-    pub fn get_asset(
-        env: Env,
-        asset_id: BytesN<32>,
-    ) -> Result<asset::Asset, errors::ContractError> {
+    pub fn get_asset(env: Env, asset_id: BytesN<32>) -> Result<asset::Asset, Error> {
         let key = asset::DataKey::Asset(asset_id);
         let store = env.storage().persistent();
         match store.get::<_, asset::Asset>(&key) {
             Some(a) => Ok(a),
-            None => Err(errors::ContractError::AssetNotFound),
+            None => Err(Error::AssetNotFound),
         }
     }
 
@@ -67,9 +76,9 @@ impl AssetUpContract {
         name: String,
         location: String,
         admin: Address,
-    ) -> Result<(), errors::ContractError> {
+    ) -> Result<(), Error> {
         // Enforce admin-only access for branch creation
-        let contract_admin = Self::get_admin(env.clone());
+        let contract_admin = Self::get_admin(env.clone())?;
         contract_admin.require_auth();
 
         if name.is_empty() {
@@ -79,7 +88,7 @@ impl AssetUpContract {
         let key = branch::DataKey::Branch(id.clone());
         let store = env.storage().persistent();
         if store.has(&key) {
-            return Err(errors::ContractError::BranchAlreadyExists);
+            return Err(Error::BranchAlreadyExists);
         }
 
         let branch = branch::Branch {
@@ -103,25 +112,24 @@ impl AssetUpContract {
         env: Env,
         branch_id: BytesN<32>,
         asset_id: BytesN<32>,
-    ) -> Result<(), errors::ContractError> {
+    ) -> Result<(), Error> {
         // Verify branch exists
         let branch_key = branch::DataKey::Branch(branch_id.clone());
         let store = env.storage().persistent();
         if !store.has(&branch_key) {
-            return Err(errors::ContractError::BranchNotFound);
+            return Err(Error::BranchNotFound);
         }
 
         // Verify asset exists
         let asset_key = asset::DataKey::Asset(asset_id.clone());
         if !store.has(&asset_key) {
-            return Err(errors::ContractError::AssetNotFound);
+            return Err(Error::AssetNotFound);
         }
 
         // Get current asset list
         let asset_list_key = branch::DataKey::AssetList(branch_id);
-        let mut asset_list: Vec<BytesN<32>> = store
-            .get(&asset_list_key)
-            .unwrap_or_else(|| Vec::new(&env));
+        let mut asset_list: Vec<BytesN<32>> =
+            store.get(&asset_list_key).unwrap_or_else(|| Vec::new(&env));
 
         // Check if asset is already in the list
         for existing_asset_id in asset_list.iter() {
@@ -137,15 +145,12 @@ impl AssetUpContract {
         Ok(())
     }
 
-    pub fn get_branch_assets(
-        env: Env,
-        branch_id: BytesN<32>,
-    ) -> Result<Vec<BytesN<32>>, errors::ContractError> {
+    pub fn get_branch_assets(env: Env, branch_id: BytesN<32>) -> Result<Vec<BytesN<32>>, Error> {
         // Verify branch exists
         let branch_key = branch::DataKey::Branch(branch_id.clone());
         let store = env.storage().persistent();
         if !store.has(&branch_key) {
-            return Err(errors::ContractError::BranchNotFound);
+            return Err(Error::BranchNotFound);
         }
 
         // Get asset list
@@ -156,16 +161,48 @@ impl AssetUpContract {
         }
     }
 
-    pub fn get_branch(
-        env: Env,
-        branch_id: BytesN<32>,
-    ) -> Result<branch::Branch, errors::ContractError> {
+    pub fn get_branch(env: Env, branch_id: BytesN<32>) -> Result<branch::Branch, Error> {
         let key = branch::DataKey::Branch(branch_id);
         let store = env.storage().persistent();
         match store.get::<_, branch::Branch>(&key) {
             Some(branch) => Ok(branch),
-            None => Err(errors::ContractError::BranchNotFound),
+            None => Err(Error::BranchNotFound),
         }
+    }
+
+    /// Tokenize an existing asset by attaching a Stellar token ID.
+    ///
+    /// Access: Only the contract admin (set during `initialize`) can call this.
+    ///
+    /// Behavior:
+    /// - Loads the asset by `asset_id`.
+    /// - Updates `stellar_token_id` with `token_id`.
+    /// - Persists the updated asset.
+    pub fn tokenize_asset(
+        env: Env,
+        asset_id: BytesN<32>,
+        token_id: BytesN<32>,
+    ) -> Result<(), Error> {
+        // Enforce admin-only access
+        let admin_key = DataKey::Admin;
+        if !env.storage().persistent().has(&admin_key) {
+            handle_error(&env, Error::AdminNotFound)
+        }
+        let admin: Address = env.storage().persistent().get(&admin_key).unwrap();
+        admin.require_auth();
+
+        // Fetch asset
+        let key = asset::DataKey::Asset(asset_id.clone());
+        let store = env.storage().persistent();
+        let mut a: asset::Asset = match store.get(&key) {
+            Some(v) => v,
+            None => return Err(Error::AssetNotFound),
+        };
+
+        // Update token id
+        a.stellar_token_id = token_id;
+        store.set(&key, &a);
+        Ok(())
     }
 }
 
